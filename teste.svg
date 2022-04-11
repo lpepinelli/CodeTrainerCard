@@ -25,13 +25,12 @@
       </style>
 
       <div class="tags">
-        <div class="tag">Angular</div>
-        <div class="tag">Vue(X)</div>
         <div class="tag">JavaScript</div>
         <div class="tag">TypeScript</div>
+        <div class="tag">React</div>
       </div>
       <div class="tags">
-        <div class="tag">(S)CSS</div>
+        <div class="tag">CSS</div>
         <div class="tag">Building UIs</div>
         <div class="tag">Web Components</div>
       </div>
