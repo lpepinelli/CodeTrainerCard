@@ -19,14 +19,14 @@ app.set('port', port)
  * Create https server.
  */
 
-const httpServer = http.createServer(app)
+// const httpServer = http.createServer(app)
 const httpsServer = https.createServer(credentials, app)
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-httpServer.listen('3334')
+// httpServer.listen('3334')
 httpsServer.listen(port)
 httpsServer.on('error', onError)
 httpsServer.on('listening', onListening)
@@ -88,5 +88,5 @@ function onListening () {
     : 'port ' + addr!.port
   console.log(`Listening on ${bind} ☕`)
   console.log('Serving running at https://localhost:3333/api')
-  console.log('                Or  http://localhost:3334/api')
+  // console.log('                Or  http://localhost:3334/api')
 }
