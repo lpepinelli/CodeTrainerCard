@@ -19,7 +19,7 @@ app.set('port', port)
  * Create https server.
  */
 
-// const httpServer = http.createServer(app)
+const httpServer = http.createServer(app)
 const httpsServer = https.createServer(credentials, app)
 
 /**
