@@ -19,4 +19,9 @@ app.get('/', (req, res, next) => {
 
 app.use('/api', routes)
 
+app.listen(process.env.PORT || '3333', ()=> {
+  console.log(`Listening on ${process.env.PORT || '3333'} ☕`)
+  console.log(`server listening on http://localhost:${process.env.PORT || '3333'}`)
+})
+
 export default app
