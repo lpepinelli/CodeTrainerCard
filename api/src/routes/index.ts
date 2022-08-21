@@ -3,7 +3,8 @@ import express from 'express'
 const router = express.Router()
 
 router.get('/card', (req, res, next) => {
-    res.send(`<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1029" height="686" viewBox="0 0 1029 686" fill="none">
     <rect width="1029" height="686" rx="41" fill="#BC93FF"/>
     <mask id="mask0_107_44" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1029" height="686">
     <rect width="1029" height="686" rx="41" fill="#BC93FF"/>
