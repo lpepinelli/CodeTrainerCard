@@ -1,8 +1,11 @@
 import express from 'express'
+import { getCard } from '../controller/cardController';
 
 const router = express.Router()
 
-router.get('/card', (req, res, next) => {
+router.get('/card/:username', getCard)
+
+router.get('/fixedCard', (req, res, next) => {
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1029" height="686" viewBox="0 0 1029 686" fill="none">
     <rect width="1029" height="686" rx="41" fill="#BC93FF"/>
