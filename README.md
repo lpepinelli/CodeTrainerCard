@@ -11,3 +11,4 @@
 <img src="https://github-readme-stats.vercel.app/api?username=lpepinelli&theme=radical&show_icons=true">
 
 <img src="https://developertrainercardmvp-production.up.railway.app/api/card" width="500px">
+<img src="http://localhost:3333/api/card/lpepinelli" width="500px">

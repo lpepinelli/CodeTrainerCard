@@ -1,6 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import routes from './routes'
+import path from 'path'
+import livereload from "livereload";
+import connectLivereload from "connect-livereload";
 
 const app = express()
 
@@ -9,6 +12,15 @@ const app = express()
 //   optionsSuccessStatus: 200
 // }
 app.use(cors())
+
+// Live reload setup
+const livereloadServer = livereload.createServer();
+livereloadServer.watch(__dirname);
+app.use(connectLivereload());
+
+app.get("/preview", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
