@@ -1,0 +1,19 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/duduribeiro/devcontainer-features/neovim:1": {},
+    "ghcr.io/joshuanianji/devcontainer-features/terraform-cli-persistence:1": {},
+    "ghcr.io/devcontainers-extra/features/terraform-asdf:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "asvetliakov.vscode-neovim",
+        "dracula-theme.theme-dracula",
+        "pkief.material-icon-theme",
+        "yoavbls.pretty-ts-errors",
+        "4ops.terraform"
+      ]
+    }
+  }
+}
