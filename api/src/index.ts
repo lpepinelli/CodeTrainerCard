@@ -1,9 +1,7 @@
-import express from 'express'
 import cors from 'cors'
-import routes from './routes'
+import express from 'express'
 import path from 'path'
-import livereload from "livereload";
-import connectLivereload from "connect-livereload";
+import routes from './routes'
 
 const app = express()
 
@@ -14,9 +12,13 @@ const app = express()
 app.use(cors())
 
 // Live reload setup
-const livereloadServer = livereload.createServer();
-livereloadServer.watch(__dirname);
-app.use(connectLivereload());
+// const livereloadServer = livereload.createServer({
+//   extraExts: ['ts'],
+
+// });
+// console.log(__dirname)
+// livereloadServer.watch(__dirname);
+// app.use(connectLivereload());
 
 app.get("/preview", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
