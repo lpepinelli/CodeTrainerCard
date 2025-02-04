@@ -1,5 +1,6 @@
-import express from 'express'
 import cors from 'cors'
+import express from 'express'
+import path from 'path'
 import routes from './routes'
 
 const app = express()
@@ -9,6 +10,10 @@ const app = express()
 //   optionsSuccessStatus: 200
 // }
 app.use(cors())
+
+app.get("/preview", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
