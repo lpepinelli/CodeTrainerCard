@@ -11,15 +11,6 @@ const app = express()
 // }
 app.use(cors())
 
-// Live reload setup
-// const livereloadServer = livereload.createServer({
-//   extraExts: ['ts'],
-
-// });
-// console.log(__dirname)
-// livereloadServer.watch(__dirname);
-// app.use(connectLivereload());
-
 app.get("/preview", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
