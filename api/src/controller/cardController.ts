@@ -1,3 +1,4 @@
+
 export const getCard = (req, res) => {
     const { username } = req.params;
     const { color } = req.query;
