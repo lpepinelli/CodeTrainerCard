@@ -3,7 +3,8 @@
   "features": {
     "ghcr.io/duduribeiro/devcontainer-features/neovim:1": {},
     "ghcr.io/joshuanianji/devcontainer-features/terraform-cli-persistence:1": {},
-    "ghcr.io/devcontainers-extra/features/terraform-asdf:2": {}
+    "ghcr.io/devcontainers-extra/features/terraform-asdf:2": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
   },
   "customizations": {
     "vscode": {
