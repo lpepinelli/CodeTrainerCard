@@ -1,5 +1,6 @@
+import type { Request, Response } from "express"
 
-export const getCard = (req, res) => {
+export const getCard = (req: Request, res: Response) => {
     const { username } = req.params;
     const { color } = req.query;
     console.log(color);
