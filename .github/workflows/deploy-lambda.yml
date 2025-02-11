@@ -3,10 +3,16 @@ name: Deploy Lambda Code
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'api/**'
+      - '.github/workflows/deploy-lambda.yml' 
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
