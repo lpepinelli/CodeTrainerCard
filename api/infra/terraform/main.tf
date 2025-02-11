@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "terraform-state-dev-trainer-card"
+    bucket = "tf-state-dev-trainer-card"
     key    = "network/terraform.tfstate"
     region = "us-east-1"
   }
@@ -16,6 +16,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_s3_bucket" "backend_bucket_prod" {
+resource "aws_s3_bucket" "cache" {
   bucket = "developer-trainer-card-cache"
 }
