@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Zip Lambda code
-        run: zip -r lambda.zip .
+        run: zip -r lambda.zip node_modules dist src
 
       - name: Deploy to Lambda
         env:

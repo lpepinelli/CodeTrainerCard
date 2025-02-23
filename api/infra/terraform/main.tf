@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 resource "aws_lambda_function" "card_lambda" {
   function_name    = "developer-trainer-card"
   role             = aws_iam_role.lambda_exec.arn
-  handler          = "src/index.handler"
+  handler          = "dist/index.handler"
   runtime          = "nodejs18.x"
   filename         = "${path.module}/dummy.zip" # Dummy zip for initial creation
   source_code_hash = filebase64sha256("${path.module}/dummy.zip")
