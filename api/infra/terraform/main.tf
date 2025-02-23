@@ -44,3 +44,20 @@ resource "aws_lambda_function" "card_lambda" {
   publish          = true
 }
 
+resource "aws_lambda_function_url" "lambda_url" {
+  function_name      = aws_lambda_function.card_lambda.function_name
+  authorization_type = "NONE"
+}
+
+resource "aws_lambda_permission" "url" {
+  statement_id           = "FunctionURLAllowPublicAccess"
+  action                 = "lambda:InvokeFunctionUrl"
+  function_name          = aws_lambda_function.card_lambda.function_name
+  principal              = "*"
+  function_url_auth_type = "NONE"
+}
+
+output "lambda_url" {
+  value = aws_lambda_function_url.lambda_url.function_url
+}
+
