@@ -10,5 +10,7 @@
 
 <img src="https://github-readme-stats.vercel.app/api?username=lpepinelli&theme=radical&show_icons=true">
 
-<img src="https://qewtws6nsbe77frmr5rhkszasa0jvnmn.lambda-url.us-east-1.on.aws/api/card/lpepinelli" width="500px">
-<img src="http://localhost:3333/api/card/lpepinelli" width="500px">
+<img src="https://qewtws6nsbe77frmr5rhkszasa0jvnmn.lambda-url.us-east-1.on.aws/api/card/lpepinelli?name=Leonardo%20Pepinelli&role=Front-end&id=166155&followers=12&commits=1200&prs=25" width="500px">
+<img src="http://localhost:3333/api/card/lpepinelli?name=Leonardo%20Pepinelli&role=Front-end&id=166155&followers=12&commits=1200&prs=25" width="500px">
+
+Font: [Pokemon Fire Red](http://fontstruct.com/fontstructions/show/703881) by KaelinT, licensed under [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/). Modified to fix an invalid cmap entry.

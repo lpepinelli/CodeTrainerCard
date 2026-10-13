@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "concurrently \"tsx watch src/index.ts\" \"livereload --extraExts 'ts' --wait 600\"",
-    "build": "tsc"
+    "build": "tsc && cp -r src/assets dist/"
   },
   "license": "MIT",
   "dependencies": {

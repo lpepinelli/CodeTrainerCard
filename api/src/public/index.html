@@ -21,7 +21,7 @@
     const liveReloadURI = (location.origin || 'localhost').replace('3333', '35729')
     document.write('<script src="' + liveReloadURI + '/livereload.js?snipver=1"></' + 'script>')
 
-    const defaultEndpoint = '/api/card/lpepinelli'
+    const defaultEndpoint = '/api/card/lpepinelli?name=Leonardo Pepinelli&role=Front-end&id=166155&followers=12&commits=1200&prs=25'
 
     document.getElementById('img-preview').src = `${location.origin}${defaultEndpoint}`
     document.getElementById('preview').innerHTML = `SVG Preview - ${defaultEndpoint}`
