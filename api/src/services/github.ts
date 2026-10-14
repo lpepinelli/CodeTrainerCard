@@ -6,7 +6,10 @@ export type GithubProfile = {
     followers: number;
     commits: number;
     pullRequests: number;
+    languages: string[];
 }
+
+type Repository = { languages: { edges: { size: number; node: { name: string } }[] } };
 
 type ProfileQuery = {
     data?: {
@@ -18,6 +21,7 @@ type ProfileQuery = {
             followers: { totalCount: number };
             pullRequests: { totalCount: number };
             contributionsCollection: { totalCommitContributions: number };
+            repositories: { nodes: Repository[] };
         } | null;
     };
     errors?: { type?: string; message: string }[];
@@ -34,8 +38,23 @@ const profileQuery = `query ($login: String!) {
         followers { totalCount }
         pullRequests { totalCount }
         contributionsCollection { totalCommitContributions }
+        repositories(first: 30, ownerAffiliations: OWNER, isFork: false, orderBy: { field: PUSHED_AT, direction: DESC }) {
+            nodes {
+                languages(first: 5, orderBy: { field: SIZE, direction: DESC }) {
+                    edges { size node { name } }
+                }
+            }
+        }
     }
 }`;
+
+const rankLanguages = (repositories: Repository[]) => {
+    const totals = new Map<string, number>();
+    repositories.forEach((repository) => repository.languages.edges.forEach(({ size, node }) => {
+        totals.set(node.name, (totals.get(node.name) || 0) + size);
+    }));
+    return [...totals.entries()].sort((a, b) => b[1] - a[1]).map(([name]) => name);
+}
 
 // Cards are shown through <img>, which can't load external images, so the avatar is inlined as a data URI
 const fetchAvatar = async (url: string) => {
@@ -71,5 +90,6 @@ export const getGithubProfile = async (login: string): Promise<GithubProfile> =>
         followers: user.followers.totalCount,
         commits: user.contributionsCollection.totalCommitContributions,
         pullRequests: user.pullRequests.totalCount,
+        languages: rankLanguages(user.repositories.nodes),
     };
 }

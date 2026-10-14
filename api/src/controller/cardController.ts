@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express"
 
 import { getGithubProfile, GithubUserNotFoundError } from '../services/github';
+import { pickSkillIcons } from '../services/skills';
 import { renderCard } from '../templates/card';
 
 const hexColor = /^[0-9a-f]{6}$/i;
@@ -9,7 +10,7 @@ const queryText = (value: unknown, fallback: string) => typeof value === 'string
 
 export const getCard = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
-    const { color, name, role } = req.query;
+    const { color, name, role, skills } = req.query;
 
     try {
         const profile = await getGithubProfile(username);
@@ -19,6 +20,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
             name: queryText(name, profile.name || profile.login),
             role: queryText(role, '-'),
             avatar: profile.avatar,
+            skills: pickSkillIcons(typeof skills === 'string' ? skills : undefined, profile.languages),
             followers: String(profile.followers),
             commits: String(profile.commits),
             pullRequests: String(profile.pullRequests),

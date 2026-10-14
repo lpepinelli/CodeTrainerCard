@@ -6,6 +6,7 @@ export type CardData = {
     name: string;
     role: string;
     avatar: string;
+    skills: string[];
     followers: string;
     commits: string;
     pullRequests: string;
@@ -31,11 +32,16 @@ const statRow = (y: number, label: string, value: string) => `
     ${shadowText(607, y, format(value, 12), 'end')}`;
 
 const avatarSize = 247;
+const iconSize = 56;
 
 const badgeSlots = [165, 265];
 const skillSlots = [591, 691, 791, 891];
 
 const slot = (x: number) => `<rect x="${x}" y="536" width="80" height="80" rx="10" fill="white" fill-opacity="0.15" stroke="white" stroke-opacity="0.8" stroke-width="3"/>`;
+
+const slotIcons = (slots: number[], icons: string[]) => icons.slice(0, slots.length)
+    .map((icon, index) => `<image href="${icon}" x="${slots[index] + 12}" y="548" width="${iconSize}" height="${iconSize}"/>`)
+    .join('\n    ');
 
 export const renderCard = (data: CardData) => `<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -97,5 +103,6 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
     ${skillSlots.map(slot).join('\n    ')}
 
     <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
+    ${slotIcons(skillSlots, data.skills)}
 </svg>
 `
