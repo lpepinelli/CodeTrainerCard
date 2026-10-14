@@ -4,6 +4,8 @@ import path from 'path'
 import { renderBack } from './cardBack';
 import { flipStyles, motionStyles, shine, shineDefs, shineStyles } from './effects';
 import { cardBodyClip, renderChrome } from './frame';
+import { cardPalette } from './palette';
+import type { Palette } from './palette';
 import { circle, customShape, fill, outline, roundRect } from './shapes';
 import { format } from './text';
 
@@ -35,14 +37,14 @@ const shadowText = (x: number, y: number, content: string, anchor = 'start') => 
     <text x="${x + 2}" y="${y + 3}" text-anchor="${anchor}" fill="#D0D0C8">${content}</text>
     <text x="${x}" y="${y}" text-anchor="${anchor}" fill="#4B4B4B">${content}</text>`;
 
-const bullet = (y: number, step?: number) => {
+const bullet = (y: number, palette: Palette, step?: number) => {
     const dot = circle(81, y - 13, 12);
-    return `${fill(dot, 'fill="#E3D4FF"', step)}
-    ${outline(dot, 5, '#B994F7', step)}`;
+    return `${fill(dot, `fill="${palette.bulletFill}"`, step)}
+    ${outline(dot, 5, palette.bulletLine, step)}`;
 }
 
-const statRow = (y: number, label: string, value: string, step?: number, maxLength = 12) => `
-    ${bullet(y, step)}
+const statRow = (y: number, label: string, value: string, palette: Palette, step?: number, maxLength = 12) => `
+    ${bullet(y, palette, step)}
     ${shadowText(110, y, label)}
     ${shadowText(607, y, format(value, maxLength), 'end')}`;
 
@@ -81,6 +83,7 @@ const slotIcons = (slots: number[], icons: string[], size: number) => icons.slic
 
 export const renderCard = (data: CardData) => {
     const step = data.pixelated ? pixelStep : undefined;
+    const palette = cardPalette(data.color);
     return `<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <style>
@@ -103,21 +106,21 @@ export const renderCard = (data: CardData) => {
     </defs>
 
     <g class="flip">
-        ${renderFront(data, step)}${data.flipSeconds ? `
-        <g class="back">${renderBack(data, step)}
+        ${renderFront(data, palette, step)}${data.flipSeconds ? `
+        <g class="back">${renderBack(data, palette, step)}
         </g>` : ''}${data.shine ? shine : ''}
     </g>
 </svg>
 `;
 }
 
-const renderFront = (data: CardData, step?: number) => `
-    ${renderChrome(data.color, '#E3EAEA', step)}
+const renderFront = (data: CardData, palette: Palette, step?: number) => `
+    ${renderChrome(palette.base, '#E3EAEA', step)}
     <g clip-path="url(#cardBody)">
         <rect x="35" y="35" width="959" height="616" fill="url(#innerStripes)"/>
-        ${fill(avatarArcs, 'fill="#CDB8F7"', step)}
-        <rect x="35" y="62" width="959" height="80" fill="#8B63CC" fill-opacity="0.75"/>
-        <rect x="35" y="524" width="959" height="100" fill="#8B63CC" fill-opacity="0.75"/>
+        ${fill(avatarArcs, `fill="${palette.arc}"`, step)}
+        <rect x="35" y="62" width="959" height="80" fill="${palette.bar}" fill-opacity="0.75"/>
+        <rect x="35" y="524" width="959" height="100" fill="${palette.bar}" fill-opacity="0.75"/>
     </g>
 
     <path d="M58 78H488M57 128H487" stroke="white" stroke-width="3"/>
@@ -125,19 +128,19 @@ const renderFront = (data: CardData, step?: number) => `
     ${fill(idBox, 'fill="#F0F0F0"', step)}
     <text class="id" x="775" y="122" text-anchor="middle" fill="#4B4B4B">IDNo.${format(data.id, 6)}</text>
 
-    ${bullet(223, step)}
+    ${bullet(223, palette, step)}
     ${shadowText(110, 223, `NAME: ${format(data.name, 18)}`)}
     <path d="M110 240H650" stroke="#ABABAB" stroke-width="5"/>
 
-    ${statRow(316, 'ROLE', data.role, step, 15)}
-    ${statRow(374, 'FOLLOWERS', data.followers, step)}
-    ${statRow(432, 'COMMITS', data.commits, step)}
-    ${statRow(490, 'PULL-REQUESTS', data.pullRequests, step)}
+    ${statRow(316, 'ROLE', data.role, palette, step, 15)}
+    ${statRow(374, 'FOLLOWERS', data.followers, palette, step)}
+    ${statRow(432, 'COMMITS', data.commits, palette, step)}
+    ${statRow(490, 'PULL-REQUESTS', data.pullRequests, palette, step)}
 
     ${fill(avatarShape, 'fill="#333333"', step)}
 
-    <path d="M38 572H991M38 594H991" stroke="#8F72C3" stroke-opacity="0.7" stroke-width="4"/>
-    <path d="M38 583H991" stroke="#8F72C3" stroke-opacity="0.7" stroke-width="9"/>
+    <path d="M38 572H991M38 594H991" stroke="${palette.stripe}" stroke-opacity="0.7" stroke-width="4"/>
+    <path d="M38 583H991" stroke="${palette.stripe}" stroke-opacity="0.7" stroke-width="9"/>
     <text class="label" x="51" y="557" fill="white">BADGES</text>
     ${badgeSlots.map((x) => slot(x, step)).join('\n    ')}
     <path d="M479 521V621" stroke="white" stroke-width="5"/>

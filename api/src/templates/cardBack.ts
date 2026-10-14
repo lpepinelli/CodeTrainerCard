@@ -1,11 +1,11 @@
 import { renderChrome } from './frame';
+import type { Palette } from './palette';
 import { circle, customShape, fill, outline } from './shapes';
 import { escapeXml, format } from './text';
 
 type BackData = {
     login: string;
     since: string;
-    color: string;
 }
 
 const ink = '#4B4B4B';
@@ -36,7 +36,7 @@ const glint = customShape(
 // A trainer ball with a code tag as its button, centred above the card title
 const devBall = (color: string, step?: number) => `
     ${fill(ball, 'fill="white"', step)}
-    ${fill(topHalf, `fill="#${color}"`, step)}
+    ${fill(topHalf, `fill="${color}"`, step)}
     ${fill(topHalf, 'fill="black" fill-opacity="0.12"', step)}
     ${fill(glint, 'fill="white" fill-opacity="0.45"', step)}
     <path d="M364.5 265H664.5" stroke="${ink}" stroke-width="20"/>
@@ -45,12 +45,12 @@ const devBall = (color: string, step?: number) => `
     ${outline(button, 14, ink, step)}
     <text class="label" x="514.5" y="278" text-anchor="middle" fill="${ink}">&lt;/&gt;</text>`;
 
-export const renderBack = (data: BackData, step?: number) => `
-    ${renderChrome(data.color, '#8B63CC', step)}
+export const renderBack = (data: BackData, palette: Palette, step?: number) => `
+    ${renderChrome(palette.base, palette.bar, step)}
     <g clip-path="url(#cardBody)">
         <rect x="35" y="35" width="959" height="616" fill="url(#innerStripes)" opacity="0.25"/>
     </g>
-    ${devBall(data.color, step)}
+    ${devBall(palette.base, step)}
     <text class="title" x="514.5" y="500" text-anchor="middle" fill="white">DEVELOPER TRAINER CARD</text>
     <path d="M300 520H729" stroke="white" stroke-width="3"/>
     <text class="label" x="514.5" y="575" text-anchor="middle" fill="white">@${escapeXml(data.login)}</text>

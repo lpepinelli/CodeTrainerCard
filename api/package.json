@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "GITHUB_TOKEN=${GITHUB_TOKEN:-$(gh auth token)} concurrently \"tsx watch --include 'src/assets/**' --include 'src/public/**' src/index.ts\" \"livereload --extraExts 'ts,svg,ttf' --wait 600\"",
-    "build": "tsc && cp -r src/assets dist/"
+    "build": "tsc && cp -r src/assets dist/",
+    "test": "tsx --test 'test/**/*.test.ts'"
   },
   "license": "MIT",
   "dependencies": {
