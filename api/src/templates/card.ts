@@ -32,10 +32,10 @@ const shadowText = (x: number, y: number, content: string, anchor = 'start') => 
 
 const bullet = (y: number) => `<circle cx="81" cy="${y - 13}" r="12" fill="#E3D4FF" stroke="#B994F7" stroke-width="5"/>`;
 
-const statRow = (y: number, label: string, value: string) => `
+const statRow = (y: number, label: string, value: string, maxLength = 12) => `
     ${bullet(y)}
     ${shadowText(110, y, label)}
-    ${shadowText(607, y, format(value, 12), 'end')}`;
+    ${shadowText(607, y, format(value, maxLength), 'end')}`;
 
 export const avatarSize = 247;
 export const iconSize = 56;
@@ -103,7 +103,7 @@ const renderFront = (data: CardData) => `
     ${shadowText(110, 223, `NAME: ${format(data.name, 18)}`)}
     <path d="M110 240H650" stroke="#ABABAB" stroke-width="5"/>
 
-    ${statRow(316, 'ROLE', data.role)}
+    ${statRow(316, 'ROLE', data.role, 15)}
     ${statRow(374, 'FOLLOWERS', data.followers)}
     ${statRow(432, 'COMMITS', data.commits)}
     ${statRow(490, 'PULL-REQUESTS', data.pullRequests)}
