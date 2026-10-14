@@ -102,3 +102,24 @@ test('an outside outline is the same size with and without pixelate', () => {
     const pixelDiameter = (Math.max(...columns) - Math.min(...columns) + 1) * step;
     assert.equal(pixelDiameter, smoothDiameter);
 });
+
+test('a rounded rectangle outline keeps its rows as wide as the outline around the corners', () => {
+    const ring = blocksOf(outline(roundRect(31, 31, 967, 624, 30), 8, 'black', step));
+    const leftRuns = new Map<number, number>();
+    ring.forEach((block) => {
+        const [col, row] = block.split(',').map(Number);
+        if (col < 30) leftRuns.set(row, (leftRuns.get(row) || 0) + 1);
+    });
+    // Two blocks along the side and around the corner; only the top edge itself runs wider
+    const corner = [...leftRuns.entries()].filter(([row]) => row > 8 && row < 30).map(([, width]) => width);
+    assert.ok(corner.every((width) => width <= 3), `corner rows ${corner}`);
+    assert.ok(corner.filter((width) => width === 2).length >= corner.length - 1);
+});
+
+test('a shape drawn again reuses its blocks but takes the new colour', () => {
+    const first = fill(circle(81, 210, 12), 'fill="red"', step);
+    const second = fill(circle(81, 210, 12), 'fill="blue"', step);
+    assert.match(second, /fill="blue"/);
+    assert.doesNotMatch(second, /red/);
+    assert.equal(second.match(/d="([^"]*)"/)?.[1], first.match(/d="([^"]*)"/)?.[1]);
+});

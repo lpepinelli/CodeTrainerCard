@@ -14,6 +14,10 @@ export type ResizableShape = Shape & {
     inset: (distance: number) => ResizableShape;
     // The same shape with its size and position in whole blocks, which is what makes pixel mode draw it symmetric
     snap: (step: number) => ResizableShape;
+    // How a thick pixel outline is cut: circles keep an even thickness all the way round, while rounded rectangles use
+    // the pixel-art habit of rows as wide as the outline, which keeps their small corners round instead of turning them
+    // into heavy diagonals
+    evenOutline: boolean;
 };
 
 // Half-sizes become whole blocks around a centre on a grid line, or whole-and-a-half around a block's centre, so edges land on grid lines
@@ -29,6 +33,7 @@ export const roundRect = (x: number, y: number, w: number, h: number, r: number)
     },
     bounds: { x, y, w, h },
     inset: (d) => roundRect(x + d, y + d, w - 2 * d, h - 2 * d, Math.max(r - d, 0)),
+    evenOutline: false,
     snap: (step) => {
         const half = step / 2;
         const cx = Math.round((x + w / 2) / half) * half;
@@ -44,6 +49,7 @@ export const circle = (cx: number, cy: number, r: number): ResizableShape => ({
     contains: (px, py) => (px - cx) ** 2 + (py - cy) ** 2 < r * r,
     bounds: { x: cx - r, y: cy - r, w: 2 * r, h: 2 * r },
     inset: (d) => circle(cx, cy, r - d),
+    evenOutline: true,
     snap: (step) => {
         const diameter = Math.max(1, Math.round(2 * r / step));
         // An even diameter is centred on a grid line and an odd one on a block's centre, the only ways it comes out symmetric
@@ -128,34 +134,54 @@ const gridPath = ({ col, row, cells, origin }: Grid, step: number) => {
     return blocks.join('');
 }
 
-const pixelElement = (grid: Grid, step: number, attrs: string) =>
-    `<path d="${gridPath(grid, step)}" shape-rendering="crispEdges" ${attrs}/>`;
+// Shapes are the same on every card, only their colours change, so each one's blocks are worked out once and reused.
+// A shape's own SVG markup describes its geometry exactly, which makes it the key
+const paths = new Map<string, string>();
 
-export const fill = (shape: Shape, attrs: string, step?: number) =>
-    step ? pixelElement(rasterize(pixelShape(shape, step), step), step, attrs) : shape.svg(attrs);
+const pixelElement = (key: string, buildPath: () => string, attrs: string) => {
+    let d = paths.get(key);
+    if (d === undefined) {
+        d = buildPath();
+        paths.set(key, d);
+    }
+    return `<path d="${d}" shape-rendering="crispEdges" ${attrs}/>`;
+}
+
+export const fill = (shape: Shape, attrs: string, step?: number) => step
+    ? pixelElement(`fill ${step} ${shape.svg('')}`, () => gridPath(rasterize(pixelShape(shape, step), step), step), attrs)
+    : shape.svg(attrs);
 
 // Fills the shape on an image's pixel grid instead of the card's: `blocks` blocks across the image, starting at its corner,
 // so the shape's edge steps along the image's own pixels
 export const fillOnImageGrid = (shape: Shape, attrs: string, image: Bounds, blocks: number) => {
     const step = image.w / blocks;
-    return pixelElement(rasterize(shape, step, shape.bounds, image), step, attrs);
+    const key = `image ${blocks} ${image.x},${image.y},${image.w} ${shape.svg('')}`;
+    return pixelElement(key, () => gridPath(rasterize(shape, step, shape.bounds, image), step), attrs);
 }
 
-const pixelRing = (outer: ResizableShape, inner: ResizableShape, step: number, attrs: string) => {
-    const area = rasterize(outer, step);
-    const hole = rasterize(inner, step, outer.bounds).cells;
-    return pixelElement({ ...area, cells: area.cells.map((line, r) => line.map((filled, c) => filled && !hole[r][c])) }, step, attrs);
-}
+// Keeps blocks whose four neighbours are filled, peeling off a one-block edge whose steps touch at the corners
+const erode = (cells: boolean[][]) => cells.map((line, r) => line.map((filled, c) =>
+    filled && !!line[c - 1] && !!line[c + 1] && !!(cells[r - 1] && cells[r - 1][c]) && !!(cells[r + 1] && cells[r + 1][c])));
 
-// In pixel mode the outline is the space between two snapped shapes a whole number of blocks apart, split around the
-// shape's edge like a stroke, which keeps its thickness even all the way round. The inner shape always fits inside the
-// fill, so the two never leave a gap
+// The ring is the outer shape minus a hole `blocks` thick inside it (see `evenOutline`). The hole never reaches past
+// `fill`, the shape drawn underneath, so the two never leave a gap
+const pixelRing = (outer: ResizableShape, fill: ResizableShape, blocks: number, step: number, attrs: string) =>
+    pixelElement(`ring ${blocks} ${step} ${outer.svg('')} ${fill.svg('')}`, () => {
+        const area = rasterize(outer, step);
+        const filled = rasterize(fill, step, outer.bounds).cells;
+        let hole = outer.evenOutline ? rasterize(outer.inset(blocks * step), step, outer.bounds).cells : area.cells;
+        if (!outer.evenOutline) for (let i = 0; i < blocks; i++) hole = erode(hole);
+        return gridPath({ ...area, cells: area.cells.map((line, r) => line.map((inside, c) => inside && !(hole[r][c] && filled[r][c]))) }, step);
+    }, attrs);
+
+// In pixel mode the outline is a whole number of blocks thick, split around the shape's edge like a stroke
 export const outline = (shape: ResizableShape, width: number, color: string, step?: number, opacity = 1) => {
     const opacityAttr = (name: string) => opacity < 1 ? ` ${name}="${opacity}"` : '';
     if (!step) return shape.svg(`fill="none" stroke="${color}" stroke-width="${width}"${opacityAttr('stroke-opacity')}`);
 
-    const outer = shape.snap(step).inset(-Math.round(width / 2 / step) * step);
-    return pixelRing(outer, outer.inset(Math.max(1, Math.round(width / step)) * step), step, `fill="${color}"${opacityAttr('fill-opacity')}`);
+    const base = shape.snap(step);
+    const outer = base.inset(-Math.round(width / 2 / step) * step);
+    return pixelRing(outer, base, Math.max(1, Math.round(width / step)), step, `fill="${color}"${opacityAttr('fill-opacity')}`);
 }
 
 // The outline sits entirely outside the shape, the pixel-art convention. With a width in whole blocks it lands exactly
@@ -164,5 +190,6 @@ export const outlineOutside = (shape: ResizableShape, width: number, color: stri
     if (!step) return shape.inset(-width / 2).svg(`fill="none" stroke="${color}" stroke-width="${width}"`);
 
     const base = shape.snap(step);
-    return pixelRing(base.inset(-Math.max(1, Math.round(width / step)) * step), base, step, `fill="${color}"`);
+    const blocks = Math.max(1, Math.round(width / step));
+    return pixelRing(base.inset(-blocks * step), base, blocks, step, `fill="${color}"`);
 }
