@@ -58,5 +58,8 @@ export const buildCardUrl = (apiUrl: string, options: CardOptions) => {
   return `${apiUrl}/api/card/${encodeURIComponent(options.username.trim())}${query}`
 }
 
+const cardWidth = 500
+
+// HTML rather than ![](): Markdown images can't be sized, and at its native 1029px the card fills the README
 export const buildMarkdown = (cardUrl: string, username: string) =>
-  `[![${username.trim()}'s Code Trainer Card](${cardUrl})](https://github.com/${username.trim()})`
+  `<a href="https://github.com/${username.trim()}"><img src="${cardUrl}" alt="${username.trim()}'s Code Trainer Card" width="${cardWidth}"></a>`
