@@ -20,13 +20,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build project
         run: npm run build
+
+      - name: Remove dev dependencies
+        run: npm prune --omit=dev
 
       - name: Zip Lambda code
         run: zip -r lambda.zip node_modules dist src

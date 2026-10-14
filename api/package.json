@@ -4,14 +4,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/index.js",
-    "dev": "concurrently \"tsx watch src/index.ts\" \"livereload --extraExts 'ts' --wait 600\"",
+        "dev": "concurrently "tsx watch src/index.ts" "livereload --extraExts 'ts' --wait 600"",
     "build": "tsc && cp -r src/assets dist/"
   },
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
-    "serverless-http": "^3.2.0"
+    "serverless-http": "^3.2.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",

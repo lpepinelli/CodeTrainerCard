@@ -2,26 +2,44 @@ import type { NextFunction, Request, Response } from "express"
 
 import { getBadgeIcons } from '../services/achievements';
 import { getGithubProfile, GithubUserNotFoundError } from '../services/github';
+import { pixelate as pixelateImage, pixelateAll } from '../services/pixelate';
 import { pickSkillIcons } from '../services/skills';
-import { renderCard } from '../templates/card';
+import { avatarSize, iconSize, renderCard } from '../templates/card';
 
 const hexColor = /^[0-9a-f]{6}$/i;
 
 const queryText = (value: unknown, fallback: string) => typeof value === 'string' && value ? value : fallback;
 
+const isEnabled = (value: unknown) => value === '' || value === 'true';
+
+const blocksAcrossAvatar = (value: unknown) => {
+    if (isEnabled(value)) return 80;
+    const size = Number(value);
+    return Number.isInteger(size) && size >= 8 && size <= 128 ? size : undefined;
+}
+
 export const getCard = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
-    const { color, name, role, skills } = req.query;
+    const { color, name, role, pixelate, skills } = req.query;
 
     try {
-        const [profile, badges] = await Promise.all([getGithubProfile(username), getBadgeIcons(username)]);
+        const [profile, badgeIcons] = await Promise.all([getGithubProfile(username), getBadgeIcons(username)]);
+        const skillIcons = pickSkillIcons(typeof skills === 'string' ? skills : undefined, profile.languages);
+
+        const blocks = blocksAcrossAvatar(pixelate);
+        // Icons get proportionally fewer pixels so their blocks are the same size as the avatar's
+        const iconBlocks = blocks && Math.round(blocks * iconSize / avatarSize);
+        const [avatar, badges, skillImages] = blocks && iconBlocks
+            ? await Promise.all([pixelateImage(profile.avatar, blocks), pixelateAll(badgeIcons, iconBlocks), pixelateAll(skillIcons, iconBlocks)])
+            : [profile.avatar, badgeIcons, skillIcons];
 
         const card = renderCard({
             id: String(profile.id).slice(-5).padStart(5, '0'),
             name: queryText(name, profile.name || profile.login),
             role: queryText(role, '-'),
-            avatar: profile.avatar,
-            skills: pickSkillIcons(typeof skills === 'string' ? skills : undefined, profile.languages),
+            avatar,
+            pixelated: blocks !== undefined,
+            skills: skillImages,
             badges,
             followers: String(profile.followers),
             commits: String(profile.commits),
