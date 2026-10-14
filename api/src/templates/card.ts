@@ -5,6 +5,7 @@ export type CardData = {
     id: string;
     name: string;
     role: string;
+    avatar: string;
     followers: string;
     commits: string;
     pullRequests: string;
@@ -29,6 +30,11 @@ const statRow = (y: number, label: string, value: string) => `
     ${shadowText(110, y, label)}
     ${shadowText(607, y, format(value, 12), 'end')}`;
 
+const avatarSize = 247;
+
+const badgeSlots = [165, 265];
+const skillSlots = [591, 691, 791, 891];
+
 const slot = (x: number) => `<rect x="${x}" y="536" width="80" height="80" rx="10" fill="white" fill-opacity="0.15" stroke="white" stroke-opacity="0.8" stroke-width="3"/>`;
 
 export const renderCard = (data: CardData) => `<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,6 +54,9 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
         </pattern>
         <clipPath id="cardBody">
             <rect x="35" y="35" width="959" height="616" rx="26"/>
+        </clipPath>
+        <clipPath id="avatar">
+            <circle cx="823.5" cy="348.5" r="123.5"/>
         </clipPath>
     </defs>
 
@@ -82,13 +91,11 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
     <path d="M38 572H991M38 594H991" stroke="#8F72C3" stroke-opacity="0.7" stroke-width="4"/>
     <path d="M38 583H991" stroke="#8F72C3" stroke-opacity="0.7" stroke-width="9"/>
     <text class="label" x="51" y="557" fill="white">BADGES</text>
-    ${slot(165)}
-    ${slot(265)}
+    ${badgeSlots.map(slot).join('\n    ')}
     <path d="M479 521V621" stroke="white" stroke-width="5"/>
     <text class="label" x="494" y="557" fill="white">SKILLS</text>
-    ${slot(591)}
-    ${slot(691)}
-    ${slot(791)}
-    ${slot(891)}
+    ${skillSlots.map(slot).join('\n    ')}
+
+    <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
 </svg>
 `

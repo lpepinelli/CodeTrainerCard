@@ -16,6 +16,11 @@ provider "aws" {
   region = "us-east-1"
 }
 
+variable "github_token" {
+  type      = string
+  sensitive = true
+}
+
 # IAM role for Lambda
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_exec_role"
@@ -42,6 +47,19 @@ resource "aws_lambda_function" "card_lambda" {
   filename         = "${path.module}/dummy.zip" # Dummy zip for initial creation
   source_code_hash = filebase64sha256("${path.module}/dummy.zip")
   publish          = true
+  timeout          = 10
+
+  environment {
+    variables = {
+      GITHUB_TOKEN = var.github_token
+      NODE_ENV     = "production"
+    }
+  }
+
+  # Code is deployed by the GitHub workflow; without this, apply would roll it back to dummy.zip
+  lifecycle {
+    ignore_changes = [filename, source_code_hash]
+  }
 }
 
 resource "aws_lambda_function_url" "lambda_url" {
