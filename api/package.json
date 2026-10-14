@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/index.js",
-        "dev": "concurrently "tsx watch src/index.ts" "livereload --extraExts 'ts' --wait 600"",
+    "dev": "concurrently \"tsx watch --include 'src/assets/**' --include 'src/public/**' src/index.ts\" \"livereload --extraExts 'ts,svg,ttf' --wait 600\"",
     "build": "tsc && cp -r src/assets dist/"
   },
   "license": "MIT",

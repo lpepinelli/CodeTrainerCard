@@ -26,9 +26,11 @@ app.get('/', (req, res, next) => {
 app.use('/api', routes)
 
 if (require.main === module) {
+  const url = `http://localhost:${process.env.PORT || '3333'}`
   app.listen(process.env.PORT || '3333', () => {
-    console.log(`Listening on ${process.env.PORT || '3333'} ☕`)
-    console.log(`server listening on http://localhost:${process.env.PORT || '3333'}`)
+    console.log(`server listening on ${url} ☕`)
+    console.log(`preview: ${url}/preview`)
+    console.log(`card:    ${url}/api/card/lpepinelli?role=Front-end&pixelate`)
   })
 }
 
