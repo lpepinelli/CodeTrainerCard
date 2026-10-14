@@ -6,6 +6,7 @@ export type GithubProfile = {
     avatar: string;
     followers: number;
     commits: number;
+    privateContributions: number;
     pullRequests: number;
     languages: string[];
 }
@@ -22,7 +23,7 @@ type ProfileQuery = {
             avatarUrl: string;
             followers: { totalCount: number };
             pullRequests: { totalCount: number };
-            contributionsCollection: { totalCommitContributions: number };
+            contributionsCollection: { totalCommitContributions: number; restrictedContributionsCount: number };
             repositories: { nodes: Repository[] };
         } | null;
     };
@@ -40,7 +41,7 @@ const profileQuery = `query ($login: String!) {
         avatarUrl(size: 256)
         followers { totalCount }
         pullRequests { totalCount }
-        contributionsCollection { totalCommitContributions }
+        contributionsCollection { totalCommitContributions restrictedContributionsCount }
         repositories(first: 30, ownerAffiliations: OWNER, isFork: false, orderBy: { field: PUSHED_AT, direction: DESC }) {
             nodes {
                 languages(first: 5, orderBy: { field: SIZE, direction: DESC }) {
@@ -93,6 +94,8 @@ export const getGithubProfile = async (login: string): Promise<GithubProfile> =>
         avatar: await fetchAvatar(user.avatarUrl),
         followers: user.followers.totalCount,
         commits: user.contributionsCollection.totalCommitContributions,
+        // Only users who enabled "Include private contributions" have this; GitHub reports it as one total with no breakdown by type
+        privateContributions: user.contributionsCollection.restrictedContributionsCount,
         pullRequests: user.pullRequests.totalCount,
         languages: rankLanguages(user.repositories.nodes),
     };

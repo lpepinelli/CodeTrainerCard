@@ -26,7 +26,7 @@ const secondsPerSide = (value: unknown) => {
 
 export const getCard = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
-    const { color, name, role, pixelate, skills, shine } = req.query;
+    const { color, name, role, pixelate, skills, shine, private: includePrivate } = req.query;
 
     try {
         const [profile, badgeIcons] = await Promise.all([getGithubProfile(username), getBadgeIcons(username)]);
@@ -50,7 +50,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
             skills: skillImages,
             badges,
             followers: String(profile.followers),
-            commits: String(profile.commits),
+            commits: String(profile.commits + (isEnabled(includePrivate) ? profile.privateContributions : 0)),
             pullRequests: String(profile.pullRequests),
             color: typeof color === 'string' && hexColor.test(color) ? color : 'BC93FF',
             shine: isEnabled(shine),
