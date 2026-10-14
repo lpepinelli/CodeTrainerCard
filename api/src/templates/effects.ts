@@ -5,18 +5,21 @@ import { fill } from './shapes';
 
 const flipTime = 0.6;
 
+// The back carries no information, so it only shows briefly; the front's time is configurable
+const backSeconds = 4;
+
 // A 3D rotateY isn't reliably supported on SVG elements, so the flip squashes the card to zero width and swaps sides at the midpoint
-export const flipStyles = (secondsPerSide: number) => {
-    const total = 2 * secondsPerSide + 2 * flipTime;
+export const flipStyles = (frontSeconds: number) => {
+    const total = frontSeconds + backSeconds + 2 * flipTime;
     const at = (seconds: number) => `${(seconds / total * 100).toFixed(2)}%`;
-    const toBack = secondsPerSide + flipTime / 2;
-    const toFront = 2 * secondsPerSide + 1.5 * flipTime;
+    const toBack = frontSeconds + flipTime / 2;
+    const toFront = frontSeconds + backSeconds + 1.5 * flipTime;
 
     return `
             .flip { transform-origin: 514.5px 343px; animation: flip ${total}s ease-in-out infinite; }
             .back { opacity: 0; animation: back ${total}s step-end infinite; }
             @keyframes flip {
-                0%, ${at(secondsPerSide)}, ${at(secondsPerSide + flipTime)}, ${at(2 * secondsPerSide + flipTime)}, 100% { transform: scaleX(1); }
+                0%, ${at(frontSeconds)}, ${at(frontSeconds + flipTime)}, ${at(frontSeconds + flipTime + backSeconds)}, 100% { transform: scaleX(1); }
                 ${at(toBack)}, ${at(toFront)} { transform: scaleX(0); }
             }
             @keyframes back {

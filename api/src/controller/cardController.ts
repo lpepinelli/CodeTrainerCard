@@ -18,8 +18,8 @@ const blocksAcrossAvatar = (value: unknown) => {
     return Number.isInteger(size) && size >= 8 && size <= 128 ? size : undefined;
 }
 
-const secondsPerSide = (value: unknown) => {
-    if (isEnabled(value)) return 5;
+const frontSeconds = (value: unknown) => {
+    if (isEnabled(value)) return 10;
     const seconds = Number(value);
     return Number.isInteger(seconds) && seconds >= 2 && seconds <= 60 ? seconds : undefined;
 }
@@ -54,7 +54,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
             pullRequests: String(profile.pullRequests),
             color: typeof color === 'string' && hexColor.test(color) ? color : 'BC93FF',
             shine: isEnabled(shine),
-            flipSeconds: secondsPerSide(req.query['auto-flip']),
+            flipSeconds: frontSeconds(req.query['auto-flip']),
         });
 
         // GitHub's image proxy honours this, which keeps README traffic from exhausting the API rate limit
