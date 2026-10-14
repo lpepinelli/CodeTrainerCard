@@ -36,7 +36,7 @@ function App() {
         <Logo />
         <div>
           <h1>Code Trainer Card</h1>
-          <p>Build your card and drop it in your GitHub README</p>
+          <p>The trainer card for devs. Build yours and drop it in your GitHub README</p>
         </div>
       </header>
       <main className="layout">
