@@ -68,7 +68,7 @@ export const renderBack = (data: BackData, palette: Palette, step?: number) => `
         <rect x="35" y="35" width="959" height="616" fill="url(#innerStripes)" opacity="0.25"/>
     </g>
     ${devBall(palette.base, step)}
-    <text class="title" x="514.5" y="500" text-anchor="middle" fill="white">DEVELOPER TRAINER CARD</text>
-    <path d="M300 520H729" stroke="white" stroke-width="3"/>
+    <text class="title" x="514.5" y="500" text-anchor="middle" fill="white">CODE TRAINER CARD</text>
+    <path d="M351.5 520H677.5" stroke="white" stroke-width="3"/>
     <text class="label" x="514.5" y="575" text-anchor="middle" fill="white">@${escapeXml(data.login)}</text>
     <text class="label" x="514.5" y="622" text-anchor="middle" fill="white" fill-opacity="0.8">TRAINER SINCE ${format(data.since, 4)}</text>`;

@@ -49,6 +49,6 @@ test('disabled effects are left out even when their values changed', () => {
 test('markdown links the card to the GitHub profile', () => {
   assert.equal(
     buildMarkdown('https://api.test/api/card/octocat', 'octocat'),
-    "[![octocat's Developer Trainer Card](https://api.test/api/card/octocat)](https://github.com/octocat)"
+    "[![octocat's Code Trainer Card](https://api.test/api/card/octocat)](https://github.com/octocat)"
   )
 })

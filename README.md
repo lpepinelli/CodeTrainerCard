@@ -1,4 +1,4 @@
-# Developer Trainer Card - MVP
+# Code Trainer Card - MVP
 
 <img src="https://github-readme-stats.vercel.app/api?username=lpepinelli&theme=radical&show_icons=true">
 

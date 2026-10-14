@@ -1,4 +1,4 @@
-# AGENTS.md - Developer Trainer Card MVP
+# AGENTS.md - Code Trainer Card MVP
 
 ## Project Overview
 

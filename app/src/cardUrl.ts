@@ -59,4 +59,4 @@ export const buildCardUrl = (apiUrl: string, options: CardOptions) => {
 }
 
 export const buildMarkdown = (cardUrl: string, username: string) =>
-  `[![${username.trim()}'s Developer Trainer Card](${cardUrl})](https://github.com/${username.trim()})`
+  `[![${username.trim()}'s Code Trainer Card](${cardUrl})](https://github.com/${username.trim()})`

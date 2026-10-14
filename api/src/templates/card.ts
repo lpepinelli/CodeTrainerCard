@@ -142,8 +142,8 @@ const renderFront = (data: CardData, palette: Palette, step?: number) => `
         <rect x="35" y="524" width="959" height="100" fill="${palette.bar}" fill-opacity="0.75"/>
     </g>
 
-    <path d="M58 78H488M57 128H487" stroke="white" stroke-width="3"/>
-    <text class="title" x="58" y="117" fill="white">DEVELOPER TRAINER CARD</text>
+    <path d="M58 78H385M57 128H384" stroke="white" stroke-width="3"/>
+    <text class="title" x="58" y="117" fill="white">CODE TRAINER CARD</text>
     ${fill(idBox, 'fill="#F0F0F0"', step)}
     <text class="id" x="775" y="122" text-anchor="middle" fill="#4B4B4B">IDNo.${format(data.id, 6)}</text>
 
