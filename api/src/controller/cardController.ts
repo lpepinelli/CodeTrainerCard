@@ -4,7 +4,7 @@ import { getBadgeIcons } from '../services/achievements';
 import { getGithubProfile, GithubUserNotFoundError } from '../services/github';
 import { pixelate as pixelateImage, pixelateAll } from '../services/pixelate';
 import { pickSkillIcons } from '../services/skills';
-import { avatarSize, iconSize, renderCard } from '../templates/card';
+import { avatarSize, badgeSize, renderCard, skillSize } from '../templates/card';
 
 const hexColor = /^[0-9a-f]{6}$/i;
 
@@ -34,9 +34,12 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
 
         const blocks = blocksAcrossAvatar(pixelate);
         // Icons get proportionally fewer pixels so their blocks are the same size as the avatar's
-        const iconBlocks = blocks && Math.round(blocks * iconSize / avatarSize);
-        const [avatar, badges, skillImages] = blocks && iconBlocks
-            ? await Promise.all([pixelateImage(profile.avatar, blocks), pixelateAll(badgeIcons, iconBlocks), pixelateAll(skillIcons, iconBlocks)])
+        const [avatar, badges, skillImages] = blocks
+            ? await Promise.all([
+                pixelateImage(profile.avatar, blocks),
+                pixelateAll(badgeIcons, Math.round(blocks * badgeSize / avatarSize)),
+                pixelateAll(skillIcons, Math.round(blocks * skillSize / avatarSize)),
+            ])
             : [profile.avatar, badgeIcons, skillIcons];
 
         const card = renderCard({

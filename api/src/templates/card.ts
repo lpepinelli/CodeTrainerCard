@@ -47,7 +47,8 @@ const statRow = (y: number, label: string, value: string, step?: number, maxLeng
     ${shadowText(607, y, format(value, maxLength), 'end')}`;
 
 export const avatarSize = 247;
-export const iconSize = 56;
+export const skillSize = 56;
+export const badgeSize = 68;
 
 const avatarShape = circle(823.5, 348.5, 123.5);
 
@@ -73,8 +74,9 @@ const slot = (x: number, step?: number) => {
     ${outline(box, 3, 'white', step, 0.8)}`;
 }
 
-const slotIcons = (slots: number[], icons: string[]) => icons.slice(0, slots.length)
-    .map((icon, index) => `<image href="${icon}" x="${slots[index] + 12}" y="548" width="${iconSize}" height="${iconSize}"/>`)
+// Icons are centred in the 80-unit slots that start at y=536
+const slotIcons = (slots: number[], icons: string[], size: number) => icons.slice(0, slots.length)
+    .map((icon, index) => `<image href="${icon}" x="${slots[index] + (80 - size) / 2}" y="${536 + (80 - size) / 2}" width="${size}" height="${size}"/>`)
     .join('\n        ');
 
 export const renderCard = (data: CardData) => {
@@ -144,6 +146,6 @@ const renderFront = (data: CardData, step?: number) => `
 
     <g${data.pixelated ? ' style="image-rendering: pixelated"' : ''}>
         <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
-        ${slotIcons(badgeSlots, data.badges)}
-        ${slotIcons(skillSlots, data.skills)}
+        ${slotIcons(badgeSlots, data.badges, badgeSize)}
+        ${slotIcons(skillSlots, data.skills, skillSize)}
     </g>`;
