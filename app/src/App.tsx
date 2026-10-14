@@ -1,32 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect, useState } from 'react'
+
+import { buildCardUrl } from './cardUrl'
+import type { CardOptions } from './cardUrl'
+import { apiUrl } from './config/api'
+import { loadOptions, saveOptions } from './savedOptions'
+import CardPreview from './components/CardPreview'
+import OptionsForm from './components/OptionsForm'
+import ShareActions from './components/ShareActions'
+
+// Typing and dragging fire a change per keystroke or step, so the preview waits for them to settle before requesting a new card
+const previewDelay = 600
+
+const urlFor = (options: CardOptions) => options.username.trim() ? buildCardUrl(apiUrl, options) : ''
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [options, setOptions] = useState(loadOptions)
+  const [previewOptions, setPreviewOptions] = useState(options)
+
+  const changeOptions = (next: CardOptions, instant: boolean) => {
+    setOptions(next)
+    if (instant) setPreviewOptions(next)
+  }
+
+  useEffect(() => saveOptions(options), [options])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setPreviewOptions(options), previewDelay)
+    return () => clearTimeout(timeout)
+  }, [options])
+
+  const cardUrl = urlFor(options)
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className="page">
+      <header className="title">
+        <h1>Developer Trainer Card</h1>
+        <p>Build your card and drop it in your GitHub README</p>
+      </header>
+      <main className="layout">
+        <section className="panel preview-panel" aria-label="Preview">
+          <CardPreview url={urlFor(previewOptions)} />
+          <ShareActions cardUrl={cardUrl} username={options.username} />
+        </section>
+        <section className="panel" aria-label="Options">
+          <OptionsForm options={options} onChange={changeOptions} />
+        </section>
+      </main>
     </div>
   )
 }
