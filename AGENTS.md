@@ -145,13 +145,14 @@ DeveloperTrainerCard-MVP/
 │   └── tsconfig.json
 ├── app/                    # Frontend (React + Vite + TypeScript)
 │   ├── src/
-│   │   ├── App.tsx                 # Options state, debounced username, layout
+│   │   ├── App.tsx                 # Switches between the title screen and the builder (#builder hash)
 │   │   ├── main.tsx
 │   │   ├── cardUrl.ts              # Builds the card URL and Markdown from the options
 │   │   ├── renderPreview.ts        # Renders the preview in the browser with api/src/card + canvas pixelation
 │   │   ├── index.css               # Pixel style (font and palette from the card)
-│   │   ├── components/             # OptionsForm, SkillPicker, Toggle, CardPreview, ShareActions
+│   │   ├── components/             # TitleScreen, Builder (options state, debounced username), OptionsForm, CardPreview, ShareActions...
 │   │   └── config/                 # API URL
+│   ├── public/examples/        # Static example cards for the title screen (snapshots from the API)
 │   ├── test/
 │   ├── index.html
 │   ├── package.json

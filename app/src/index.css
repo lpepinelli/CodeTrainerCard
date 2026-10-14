@@ -52,7 +52,8 @@ code {
 .panel,
 input:not([type]),
 select,
-button:not(.text-button):not(.swatch),
+button:not(.text-button):not(.swatch):not(.example),
+.start,
 .skill-slot:not(.empty) {
   border: none;
   box-shadow:
@@ -96,6 +97,166 @@ button:not(.text-button):not(.swatch),
   margin: 4px 0 0;
   font-size: 28px;
   color: var(--ink);
+}
+
+.title-screen {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas:
+    'head head head'
+    'left start right';
+  align-content: center;
+  align-items: center;
+  gap: 120px 32px;
+  padding: 32px 16px;
+  overflow-x: clip;
+}
+
+.title-screen-head {
+  grid-area: head;
+  text-align: center;
+}
+
+.title-screen .title {
+  margin-bottom: 16px;
+}
+
+.title-screen h1 {
+  font-size: 80px;
+}
+
+.title-screen-head p {
+  margin: 0;
+  font-size: 32px;
+}
+
+button.example {
+  justify-self: center;
+  width: min(88%, 440px);
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  perspective: 1200px;
+  animation: float 4s ease-in-out infinite;
+}
+
+button.example:hover:not(:disabled) {
+  background: none;
+}
+
+.example.left {
+  grid-area: left;
+}
+
+.example.right {
+  grid-area: right;
+  animation-delay: -2s;
+}
+
+.example-tilt,
+.example-faces {
+  display: block;
+  transform-style: preserve-3d;
+}
+
+.example-tilt {
+  transition: transform 0.4s;
+}
+
+/* Inner edges lean away so both cards face the start button */
+.example.left .example-tilt {
+  transform: rotateY(28deg) rotateZ(-10deg);
+}
+
+.example.right .example-tilt {
+  transform: rotateY(-28deg) rotateZ(10deg);
+}
+
+/* Tracks the cursor with a short transition, so it follows closely but still eases back to rest on leave */
+@media (hover: hover) {
+  .example:hover .example-tilt {
+    transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.05);
+    transition-duration: 0.1s;
+  }
+}
+
+.example-faces {
+  position: relative;
+  transition: transform 0.6s;
+}
+
+.example-faces.flipped {
+  transform: rotateY(180deg);
+}
+
+.example-faces img {
+  display: block;
+  width: 100%;
+  backface-visibility: hidden;
+  filter: drop-shadow(8px 10px 0 rgb(95 92 110 / 0.35));
+}
+
+.example-faces .example-back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+@keyframes float {
+  50% { transform: translateY(-12px); }
+}
+
+.start {
+  grid-area: start;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: var(--pixel);
+  padding: 16px 32px;
+  background: var(--purple-dark);
+  color: #fff;
+  font-size: 40px;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 var(--frame);
+  transition: background-color 0.2s, color 0.2s, text-shadow 0.2s;
+}
+
+.start::before {
+  content: '';
+  border-left: 16px solid currentColor;
+  border-block: 12px solid transparent;
+  animation: blink 1s steps(1) infinite;
+}
+
+.start:hover {
+  background: #fff;
+  color: var(--purple-dark);
+  text-shadow: 3px 3px 0 var(--purple-light);
+}
+
+.start:focus-visible {
+  outline: var(--pixel) solid var(--purple-dark);
+  outline-offset: var(--pixel);
+}
+
+@keyframes blink {
+  50% { visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .example,
+  .start::before {
+    animation: none;
+  }
+
+  .example-tilt,
+  .example-faces {
+    transition: none;
+  }
 }
 
 .layout {
@@ -429,6 +590,10 @@ input[type='color']::-moz-color-swatch {
   text-shadow: none;
 }
 
+input.skill-search {
+  margin-bottom: 16px;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -559,6 +724,27 @@ input[type='checkbox']:checked {
 
   .title h1 {
     font-size: 40px;
+  }
+
+  .title-screen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      'head head'
+      'left right'
+      'start start';
+    gap: 32px 16px;
+  }
+
+  .title-screen h1 {
+    font-size: 48px;
+  }
+
+  .title-screen-head p {
+    font-size: 28px;
+  }
+
+  .start {
+    justify-self: center;
   }
 }
 
