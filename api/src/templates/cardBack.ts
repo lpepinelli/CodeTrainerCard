@@ -1,3 +1,5 @@
+import { renderChrome } from './frame';
+import { circle, customShape, fill, outline } from './shapes';
 import { escapeXml, format } from './text';
 
 type BackData = {
@@ -8,25 +10,47 @@ type BackData = {
 
 const ink = '#4B4B4B';
 
+const ball = circle(514.5, 265, 150);
+const button = circle(514.5, 265, 52);
+
+const topHalf = customShape(
+    (attrs) => `<path d="M364.5 265A150 150 0 0 1 664.5 265Z" ${attrs}/>`,
+    (x, y) => y < 265 && ball.contains(x, y),
+    { x: 364.5, y: 115, w: 300, h: 150 },
+);
+
+const glintAngle = 35 * Math.PI / 180;
+
+const glint = customShape(
+    (attrs) => `<ellipse cx="455" cy="185" rx="38" ry="20" transform="rotate(-35 455 185)" ${attrs}/>`,
+    (x, y) => {
+        const dx = x - 455;
+        const dy = y - 185;
+        const along = dx * Math.cos(glintAngle) - dy * Math.sin(glintAngle);
+        const across = dx * Math.sin(glintAngle) + dy * Math.cos(glintAngle);
+        return (along / 38) ** 2 + (across / 20) ** 2 <= 1;
+    },
+    { x: 417, y: 147, w: 76, h: 76 },
+);
+
 // A trainer ball with a code tag as its button, centred above the card title
-const devBall = (color: string) => `
-    <circle cx="514.5" cy="265" r="150" fill="white"/>
-    <path d="M364.5 265A150 150 0 0 1 664.5 265Z" fill="#${color}"/>
-    <path d="M364.5 265A150 150 0 0 1 664.5 265Z" fill="black" fill-opacity="0.12"/>
-    <ellipse cx="455" cy="185" rx="38" ry="20" transform="rotate(-35 455 185)" fill="white" fill-opacity="0.45"/>
+const devBall = (color: string, step?: number) => `
+    ${fill(ball, 'fill="white"', step)}
+    ${fill(topHalf, `fill="#${color}"`, step)}
+    ${fill(topHalf, 'fill="black" fill-opacity="0.12"', step)}
+    ${fill(glint, 'fill="white" fill-opacity="0.45"', step)}
     <path d="M364.5 265H664.5" stroke="${ink}" stroke-width="20"/>
-    <circle cx="514.5" cy="265" r="150" stroke="${ink}" stroke-width="12"/>
-    <circle cx="514.5" cy="265" r="52" fill="white" stroke="${ink}" stroke-width="14"/>
+    ${outline(ball, 12, ink, step)}
+    ${fill(button, 'fill="white"', step)}
+    ${outline(button, 14, ink, step)}
     <text class="label" x="514.5" y="278" text-anchor="middle" fill="${ink}">&lt;/&gt;</text>`;
 
-export const renderBack = (data: BackData) => `
-    <rect width="1029" height="686" rx="41" fill="#${data.color}"/>
-    <rect width="1029" height="686" rx="41" fill="url(#outerStripes)"/>
-    <rect x="31" y="31" width="967" height="624" rx="30" fill="#8B63CC" stroke="#5F5C6E" stroke-width="8"/>
+export const renderBack = (data: BackData, step?: number) => `
+    ${renderChrome(data.color, '#8B63CC', step)}
     <g clip-path="url(#cardBody)">
         <rect x="35" y="35" width="959" height="616" fill="url(#innerStripes)" opacity="0.25"/>
     </g>
-    ${devBall(data.color)}
+    ${devBall(data.color, step)}
     <text class="title" x="514.5" y="500" text-anchor="middle" fill="white">DEVELOPER TRAINER CARD</text>
     <path d="M300 520H729" stroke="white" stroke-width="3"/>
     <text class="label" x="514.5" y="575" text-anchor="middle" fill="white">@${escapeXml(data.login)}</text>

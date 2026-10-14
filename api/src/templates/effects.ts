@@ -1,3 +1,6 @@
+import { cardShape } from './frame';
+import { fill } from './shapes';
+
 // Effects are CSS animations inside the SVG because the card is usually shown through an <img>, which never receives hover or clicks
 
 const flipTime = 0.6;
@@ -36,7 +39,7 @@ export const motionStyles = `
             }`;
 
 // Two hard-edged bands instead of a soft gradient, to match the pixel style
-export const shineDefs = `
+export const shineDefs = (step?: number) => `
         <linearGradient id="shineBands">
             <stop offset="0" stop-color="white" stop-opacity="0"/>
             <stop offset="0.2" stop-color="white" stop-opacity="0"/>
@@ -49,7 +52,7 @@ export const shineDefs = `
             <stop offset="0.9" stop-color="white" stop-opacity="0"/>
         </linearGradient>
         <clipPath id="cardShape">
-            <rect width="1029" height="686" rx="41"/>
+            ${fill(cardShape, '', step)}
         </clipPath>`;
 
 // Starts just off the left edge, so it stays hidden when animations are disabled
