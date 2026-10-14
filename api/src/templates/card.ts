@@ -7,6 +7,7 @@ export type CardData = {
     role: string;
     avatar: string;
     skills: string[];
+    badges: string[];
     followers: string;
     commits: string;
     pullRequests: string;
@@ -34,7 +35,7 @@ const statRow = (y: number, label: string, value: string) => `
 const avatarSize = 247;
 const iconSize = 56;
 
-const badgeSlots = [165, 265];
+const badgeSlots = [165, 265, 365];
 const skillSlots = [591, 691, 791, 891];
 
 const slot = (x: number) => `<rect x="${x}" y="536" width="80" height="80" rx="10" fill="white" fill-opacity="0.15" stroke="white" stroke-opacity="0.8" stroke-width="3"/>`;
@@ -103,6 +104,7 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
     ${skillSlots.map(slot).join('\n    ')}
 
     <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
+    ${slotIcons(badgeSlots, data.badges)}
     ${slotIcons(skillSlots, data.skills)}
 </svg>
 `

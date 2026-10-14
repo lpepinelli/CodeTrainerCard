@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 
+import { getBadgeIcons } from '../services/achievements';
 import { getGithubProfile, GithubUserNotFoundError } from '../services/github';
 import { pickSkillIcons } from '../services/skills';
 import { renderCard } from '../templates/card';
@@ -13,7 +14,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
     const { color, name, role, skills } = req.query;
 
     try {
-        const profile = await getGithubProfile(username);
+        const [profile, badges] = await Promise.all([getGithubProfile(username), getBadgeIcons(username)]);
 
         const card = renderCard({
             id: String(profile.id).slice(-5).padStart(5, '0'),
@@ -21,6 +22,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
             role: queryText(role, '-'),
             avatar: profile.avatar,
             skills: pickSkillIcons(typeof skills === 'string' ? skills : undefined, profile.languages),
+            badges,
             followers: String(profile.followers),
             commits: String(profile.commits),
             pullRequests: String(profile.pullRequests),
