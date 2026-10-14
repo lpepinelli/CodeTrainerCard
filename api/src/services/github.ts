@@ -2,6 +2,7 @@ export type GithubProfile = {
     id: number;
     login: string;
     name: string | null;
+    createdAt: string;
     avatar: string;
     followers: number;
     commits: number;
@@ -17,6 +18,7 @@ type ProfileQuery = {
             databaseId: number;
             login: string;
             name: string | null;
+            createdAt: string;
             avatarUrl: string;
             followers: { totalCount: number };
             pullRequests: { totalCount: number };
@@ -34,6 +36,7 @@ const profileQuery = `query ($login: String!) {
         databaseId
         login
         name
+        createdAt
         avatarUrl(size: 256)
         followers { totalCount }
         pullRequests { totalCount }
@@ -86,6 +89,7 @@ export const getGithubProfile = async (login: string): Promise<GithubProfile> =>
         id: user.databaseId,
         login: user.login,
         name: user.name,
+        createdAt: user.createdAt,
         avatar: await fetchAvatar(user.avatarUrl),
         followers: user.followers.totalCount,
         commits: user.contributionsCollection.totalCommitContributions,

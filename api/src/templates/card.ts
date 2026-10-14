@@ -1,8 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 
+import { renderBack } from './cardBack';
+import { flipStyles, motionStyles, shine, shineDefs, shineStyles } from './effects';
+import { format } from './text';
+
 export type CardData = {
     id: string;
+    login: string;
+    since: string;
     name: string;
     role: string;
     avatar: string;
@@ -13,14 +19,12 @@ export type CardData = {
     commits: string;
     pullRequests: string;
     color: string;
+    shine: boolean;
+    flipSeconds?: number;
 }
 
 // The card is served through <img> (e.g. GitHub's camo proxy), which blocks external resources, so the font must be inlined
 const font = fs.readFileSync(path.join(__dirname, '..', 'assets', 'fonts', 'pokemonFireRed.ttf')).toString('base64');
-
-const escapeXml = (value: string) => value.replace(/[<>&"']/g, (char) => `&#${char.charCodeAt(0)};`);
-
-const format = (value: string, maxLength: number) => escapeXml(value.toUpperCase().slice(0, maxLength));
 
 const shadowText = (x: number, y: number, content: string, anchor = 'start') => `
     <text x="${x + 2}" y="${y + 3}" text-anchor="${anchor}" fill="#D0D0C8">${content}</text>
@@ -52,7 +56,7 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
             text { font-family: 'PokemonFireRed', monospace; font-size: 64px; }
             .title { font-size: 55px; }
             .label { font-size: 40px; }
-            .id { font-size: 65px; }
+            .id { font-size: 65px; }${data.flipSeconds ? flipStyles(data.flipSeconds) : ''}${data.shine ? shineStyles : ''}${motionStyles}
         </style>
         <pattern id="outerStripes" width="1029" height="18.6" patternUnits="userSpaceOnUse">
             <rect width="1029" height="5" fill="#F8F8F8" fill-opacity="0.4"/>
@@ -65,8 +69,18 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
         </clipPath>
         <clipPath id="avatar">
             <circle cx="823.5" cy="348.5" r="123.5"/>
-        </clipPath>
+        </clipPath>${data.shine ? shineDefs : ''}
     </defs>
+
+    <g class="flip">
+        ${renderFront(data)}${data.flipSeconds ? `
+        <g class="back">${renderBack(data)}
+        </g>` : ''}${data.shine ? shine : ''}
+    </g>
+</svg>
+`
+
+const renderFront = (data: CardData) => `
 
     <rect width="1029" height="686" rx="41" fill="#${data.color}"/>
     <rect width="1029" height="686" rx="41" fill="url(#outerStripes)"/>
@@ -108,6 +122,4 @@ export const renderCard = (data: CardData) => `<svg width="1029" height="686" vi
         <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
         ${slotIcons(badgeSlots, data.badges)}
         ${slotIcons(skillSlots, data.skills)}
-    </g>
-</svg>
-`
+    </g>`;
