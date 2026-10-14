@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { skills } from '../../../api/src/config/skills'
 import { maxSkills } from '../../../api/src/templates/card'
 import SkillSlots from './SkillSlots'
@@ -9,8 +11,15 @@ type SkillPickerProps = {
   onChange: (changes: { skills: string[]; hideBadges?: boolean }) => void
 }
 
+// Keys are short ('ts', 'cpp'), so GitHub's language names are searched too: 'typescript' and 'c++' still find them
+const matches = (skill: string, query: string) =>
+  [skill, ...skills[skill]].some((name) => name.toLowerCase().includes(query))
+
 function SkillPicker({ selected, hideBadges, onChange }: SkillPickerProps) {
+  const [search, setSearch] = useState('')
   const limit = maxSkills(hideBadges)
+  const query = search.trim().toLowerCase()
+  const found = Object.keys(skills).filter((skill) => matches(skill, query))
 
   const toggle = (skill: string) =>
     onChange({ skills: selected.includes(skill) ? selected.filter((item) => item !== skill) : [...selected, skill] })
@@ -32,8 +41,16 @@ function SkillPicker({ selected, hideBadges, onChange }: SkillPickerProps) {
         onCheckedChange={toggleBadges}
       />
       <SkillSlots selected={selected} limit={limit} onChange={(skills) => onChange({ skills })} />
+      <input
+        className="skill-search"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        placeholder="Search skills"
+        aria-label="Search skills"
+      />
       <div className="chips">
-        {Object.keys(skills).map((skill) => {
+        {found.length === 0 && <p className="hint">No skill matches '{search.trim()}'</p>}
+        {found.map((skill) => {
           const position = selected.indexOf(skill)
           return (
             <button
