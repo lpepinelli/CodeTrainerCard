@@ -25,3 +25,4 @@ dist-ssr
 
 infra/terraform/.terraform
 infra/terraform/.terraform.lock.hcl
+infra/terraform/*.tfvars
