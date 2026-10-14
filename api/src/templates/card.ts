@@ -69,7 +69,7 @@ const skillSlots = [591, 691, 791, 891];
 
 const slot = (x: number, step?: number) => {
     const box = roundRect(x, 536, 80, 80, 10);
-    return `${fill(box, 'fill="white" fill-opacity="0.15"', step)}
+    return `${fill(box, 'fill="#F0F0F0"', step)}
     ${outline(box, 3, 'white', step, 0.8)}`;
 }
 
