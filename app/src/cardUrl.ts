@@ -10,6 +10,7 @@ export type CardOptions = {
   autoFlip: boolean
   flipSeconds: number
   includePrivate: boolean
+  hideBadges: boolean
 }
 
 export const defaultColor = 'BC93FF'
@@ -27,7 +28,8 @@ export const defaultOptions: CardOptions = {
   shine: false,
   autoFlip: false,
   flipSeconds: defaultFlipSeconds,
-  includePrivate: false
+  includePrivate: false,
+  hideBadges: false
 }
 
 export const isHexColor = (value: string) => /^[0-9a-f]{6}$/i.test(value)
@@ -50,6 +52,7 @@ export const buildCardUrl = (apiUrl: string, options: CardOptions) => {
   if (options.shine) flag('shine')
   if (options.autoFlip) flag('auto-flip', options.flipSeconds === defaultFlipSeconds ? undefined : String(options.flipSeconds))
   if (options.includePrivate) flag('private')
+  if (options.hideBadges) flag('hide-badges')
 
   const query = params.length ? `?${params.join('&')}` : ''
   return `${apiUrl}/api/card/${encodeURIComponent(options.username.trim())}${query}`

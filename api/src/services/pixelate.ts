@@ -7,5 +7,3 @@ export const pixelate = async (dataUri: string, size: number) => {
     const pixels = await sharp(image).resize(size, size, { fit: 'cover' }).png().toBuffer();
     return `data:image/png;base64,${pixels.toString('base64')}`;
 }
-
-export const pixelateAll = (dataUris: string[], size: number) => Promise.all(dataUris.map((dataUri) => pixelate(dataUri, size)));

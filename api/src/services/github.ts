@@ -1,15 +1,6 @@
-export type GithubProfile = {
-    id: number;
-    login: string;
-    name: string | null;
-    createdAt: string;
-    avatar: string;
-    followers: number;
-    commits: number;
-    privateContributions: number;
-    pullRequests: number;
-    languages: string[];
-}
+import type { CardSource } from '../card/composeCard';
+
+export type GithubProfile = Omit<CardSource, 'badges'>;
 
 type Repository = { languages: { edges: { size: number; node: { name: string } }[] } };
 

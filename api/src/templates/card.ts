@@ -1,12 +1,9 @@
-import fs from 'fs'
-import path from 'path'
-
 import { renderBack } from './cardBack';
 import { flipStyles, motionStyles, shine, shineDefs, shineStyles } from './effects';
 import { cardBodyClip, renderChrome } from './frame';
 import { cardPalette } from './palette';
 import type { Palette } from './palette';
-import { circle, customShape, fill, outline, roundRect } from './shapes';
+import { circle, customShape, fill, fillOnImageGrid, outline, outlineOutside, roundRect } from './shapes';
 import { format } from './text';
 
 export type CardData = {
@@ -16,7 +13,8 @@ export type CardData = {
     name: string;
     role: string;
     avatar: string;
-    pixelated: boolean;
+    // Blocks across the avatar when the card is pixelated
+    pixelBlocks?: number;
     skills: string[];
     badges: string[];
     followers: string;
@@ -24,11 +22,9 @@ export type CardData = {
     pullRequests: string;
     color: string;
     shine: boolean;
+    hideBadges: boolean;
     flipSeconds?: number;
 }
-
-// The card is served through <img> (e.g. GitHub's camo proxy), which blocks external resources, so the font must be inlined
-const font = fs.readFileSync(path.join(__dirname, '..', 'assets', 'fonts', 'pokemonFireRed.ttf')).toString('base64');
 
 // Block size, in card units, of the stepped edges drawn when the card is pixelated
 const pixelStep = 4;
@@ -40,7 +36,7 @@ const shadowText = (x: number, y: number, content: string, anchor = 'start') => 
 const bullet = (y: number, palette: Palette, step?: number) => {
     const dot = circle(81, y - 13, 12);
     return `${fill(dot, `fill="${palette.bulletFill}"`, step)}
-    ${outline(dot, 5, palette.bulletLine, step)}`;
+    ${outlineOutside(dot, 4, palette.bulletLine, step)}`;
 }
 
 const statRow = (y: number, label: string, value: string, palette: Palette, step?: number, maxLength = 12) => `
@@ -54,21 +50,32 @@ export const badgeSize = 68;
 
 const avatarShape = circle(823.5, 348.5, 123.5);
 
+// A pixelated avatar's circle is drawn on the photo's own pixel grid, so its rim steps along the photo's pixels
+const avatarFill = (attrs: string, blocks?: number) =>
+    blocks ? fillOnImageGrid(avatarShape, attrs, avatarShape.bounds, blocks) : avatarShape.svg(attrs);
+
 const idBox = roundRect(591, 70, 369, 64, 8);
 
-// Two quarter rings centred on (988, 491), behind the avatar
+// Two quarter rings behind the avatar, centred on the frame's inner edge so they run into its outline
+const arcsCenter = { x: 994, y: 491 };
+
 const avatarArcs = customShape(
-    (attrs) => `<path d="M658 491A330 330 0 0 1 988 161V298A193 193 0 0 0 795 491ZM862 491A126 126 0 0 1 988 365V491Z" ${attrs}/>`,
+    (attrs) => `<path d="M${arcsCenter.x - 330} 491A330 330 0 0 1 ${arcsCenter.x} 161V298A193 193 0 0 0 ${arcsCenter.x - 193} 491ZM${arcsCenter.x - 126} 491A126 126 0 0 1 ${arcsCenter.x} 365V491Z" ${attrs}/>`,
     (x, y) => {
-        if (x > 988 || y > 491) return false;
-        const distance = Math.hypot(x - 988, y - 491);
+        if (x > arcsCenter.x || y > arcsCenter.y) return false;
+        const distance = Math.hypot(x - arcsCenter.x, y - arcsCenter.y);
         return (distance >= 193 && distance <= 330) || distance <= 126;
     },
-    { x: 658, y: 161, w: 330, h: 330 },
+    { x: arcsCenter.x - 330, y: 161, w: 330, h: 330 },
+    arcsCenter,
 );
 
 const badgeSlots = [165, 265, 365];
 const skillSlots = [591, 691, 791, 891];
+// Without badges the skills take the whole row, keeping the same right edge
+const wideSkillSlots = [191, 291, 391, 491, 591, 691, 791, 891];
+
+export const maxSkills = (hideBadges: boolean) => (hideBadges ? wideSkillSlots : skillSlots).length;
 
 const slot = (x: number, step?: number) => {
     const box = roundRect(x, 536, 80, 80, 10);
@@ -81,13 +88,25 @@ const slotIcons = (slots: number[], icons: string[], size: number) => icons.slic
     .map((icon, index) => `<image href="${icon}" x="${slots[index] + (80 - size) / 2}" y="${536 + (80 - size) / 2}" width="${size}" height="${size}"/>`)
     .join('\n        ');
 
-export const renderCard = (data: CardData) => {
-    const step = data.pixelated ? pixelStep : undefined;
+// The card is shown through <img> (e.g. GitHub's camo proxy), which blocks external resources, so the font comes in as a data URI
+const renderBadgesAndSkills = (step?: number) => `
+    <text class="label" x="51" y="557" fill="white">BADGES</text>
+    ${badgeSlots.map((x) => slot(x, step)).join('\n    ')}
+    <path d="M479 521V621" stroke="white" stroke-width="5"/>
+    <text class="label" x="494" y="557" fill="white">SKILLS</text>
+    ${skillSlots.map((x) => slot(x, step)).join('\n    ')}`;
+
+const renderSkillsOnly = (step?: number) => `
+    <text class="label" x="51" y="557" fill="white">SKILLS</text>
+    ${wideSkillSlots.map((x) => slot(x, step)).join('\n    ')}`;
+
+export const renderCard = (data: CardData, font: string) => {
+    const step = data.pixelBlocks ? pixelStep : undefined;
     const palette = cardPalette(data.color);
     return `<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <style>
-            @font-face { font-family: 'PokemonFireRed'; src: url(data:font/ttf;base64,${font}) format('truetype'); }
+            @font-face { font-family: 'PokemonFireRed'; src: url(${font}) format('truetype'); }
             text { font-family: 'PokemonFireRed', monospace; font-size: 64px; }
             .title { font-size: 55px; }
             .label { font-size: 40px; }
@@ -101,7 +120,7 @@ export const renderCard = (data: CardData) => {
         </pattern>
         ${cardBodyClip(step)}
         <clipPath id="avatar">
-            ${fill(avatarShape, '', step)}
+            ${avatarFill('', data.pixelBlocks)}
         </clipPath>${data.shine ? shineDefs(step) : ''}
     </defs>
 
@@ -137,18 +156,14 @@ const renderFront = (data: CardData, palette: Palette, step?: number) => `
     ${statRow(432, 'COMMITS', data.commits, palette, step)}
     ${statRow(490, 'PULL-REQUESTS', data.pullRequests, palette, step)}
 
-    ${fill(avatarShape, 'fill="#333333"', step)}
+    ${avatarFill('fill="#333333"', data.pixelBlocks)}
 
     <path d="M38 572H991M38 594H991" stroke="${palette.stripe}" stroke-opacity="0.7" stroke-width="4"/>
     <path d="M38 583H991" stroke="${palette.stripe}" stroke-opacity="0.7" stroke-width="9"/>
-    <text class="label" x="51" y="557" fill="white">BADGES</text>
-    ${badgeSlots.map((x) => slot(x, step)).join('\n    ')}
-    <path d="M479 521V621" stroke="white" stroke-width="5"/>
-    <text class="label" x="494" y="557" fill="white">SKILLS</text>
-    ${skillSlots.map((x) => slot(x, step)).join('\n    ')}
+    ${data.hideBadges ? renderSkillsOnly(step) : renderBadgesAndSkills(step)}
 
-    <g${data.pixelated ? ' style="image-rendering: pixelated"' : ''}>
+    <g${data.pixelBlocks ? ' style="image-rendering: pixelated"' : ''}>
         <image href="${data.avatar}" x="700" y="225" width="${avatarSize}" height="${avatarSize}" clip-path="url(#avatar)" preserveAspectRatio="xMidYMid slice"/>
-        ${slotIcons(badgeSlots, data.badges, badgeSize)}
-        ${slotIcons(skillSlots, data.skills, skillSize)}
+        ${data.hideBadges ? '' : slotIcons(badgeSlots, data.badges, badgeSize)}
+        ${slotIcons(data.hideBadges ? wideSkillSlots : skillSlots, data.skills, skillSize)}
     </g>`;

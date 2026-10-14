@@ -128,8 +128,12 @@ DeveloperTrainerCard-MVP/
 │       └── deploy-lambda.yml   # CI/CD: deploy API to AWS Lambda
 ├── api/                    # Backend (Express + TypeScript)
 │   ├── src/
+│   │   ├── card/                   # Shared with the app: query parsing + card composition (no Node APIs)
+│   │   ├── templates/              # Shared with the app: pure SVG templates and palette
+│   │   ├── config/                 # Skills and achievements (skills.ts is shared with the app)
+│   │   ├── services/               # Node-only: GitHub fetch, cache, sharp pixelation, asset loading
 │   │   ├── controller/
-│   │   │   └── cardController.ts   # SVG card generation logic
+│   │   │   └── cardController.ts   # Card SVG and card data JSON handlers
 │   │   ├── routes/
 │   │   │   └── index.ts            # API route definitions
 │   │   ├── public/
@@ -141,13 +145,13 @@ DeveloperTrainerCard-MVP/
 │   └── tsconfig.json
 ├── app/                    # Frontend (React + Vite + TypeScript)
 │   ├── src/
-│   │   ├── App.tsx                 # Options state, debounced preview URL, layout
+│   │   ├── App.tsx                 # Options state, debounced username, layout
 │   │   ├── main.tsx
 │   │   ├── cardUrl.ts              # Builds the card URL and Markdown from the options
-│   │   ├── index.css               # Pixel style (Pokemon FireRed font, card palette)
+│   │   ├── renderPreview.ts        # Renders the preview in the browser with api/src/card + canvas pixelation
+│   │   ├── index.css               # Pixel style (font and palette from the card)
 │   │   ├── components/             # OptionsForm, SkillPicker, Toggle, CardPreview, ShareActions
-│   │   ├── config/                 # API URL, skill keys (mirror api/src/config/skills.ts)
-│   │   └── assets/fonts/
+│   │   └── config/                 # API URL
 │   ├── test/
 │   ├── index.html
 │   ├── package.json
@@ -165,6 +169,7 @@ DeveloperTrainerCard-MVP/
 | GET    | `/`                  | Returns `{ Warning: 'API endpoint is /api' }`  |
 | GET    | `/preview`           | Serves local HTML preview page                 |
 | GET    | `/api/card/:username`| Returns dynamic SVG card. Query: `?color=HEX` (all themed shades derive from it, see `templates/palette.ts`) |
+| GET    | `/api/card/:username/data` | GitHub data the card needs (profile, avatar and badges as data URIs, languages), used by the app to render previews |
 | GET    | `/api/fixedCard`     | Returns a hardcoded SVG card with embedded images |
 
 ---
@@ -181,6 +186,8 @@ DeveloperTrainerCard-MVP/
 ---
 
 ## Key Technical Notes
+
+- **Shared card code**: the app imports `api/src/card`, `api/src/templates`, `api/src/config/skills.ts`, `api/src/services/cache.ts` and the font/skill assets directly by relative path (Vite `server.fs.allow` includes `../api/src`). The app fetches `/data` once per username and renders every option change locally, so the preview is drawn by the same code as the real card. Keep these modules free of Node APIs (`fs`, `Buffer`, `sharp`); Node-only work goes through the `CardRuntime` passed to `composeCard`. Pixelation is the one difference: sharp in the API, canvas in the app, so pixel colors can differ slightly.
 
 - The API entry point (`api/src/index.ts`) uses `require.main === module` to conditionally start the Express server for local dev, while exporting `module.exports.handler` for Lambda.
 - The API uses `cors()` middleware with default (permissive) settings.

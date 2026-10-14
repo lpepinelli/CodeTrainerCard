@@ -1,9 +1,10 @@
 import express from 'express'
-import { getCard } from '../controller/cardController';
+import { getCard, getCardSource } from '../controller/cardController';
 
 const router = express.Router()
 
 router.get('/card/:username', getCard)
+router.get('/card/:username/data', getCardSource)
 
 router.get('/fixedCard', (req, res, next) => {
     res.setHeader('Content-Type', 'image/svg+xml');

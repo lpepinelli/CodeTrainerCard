@@ -1,5 +1,6 @@
 import { defaultColor, isHexColor } from '../cardUrl'
 import type { CardOptions } from '../cardUrl'
+import RolePicker from './RolePicker'
 import SkillPicker from './SkillPicker'
 import Toggle from './Toggle'
 
@@ -7,12 +8,11 @@ const presetColors = [defaultColor, 'FF8A8A', 'FFB36B', 'FFD966', '7EDC9A', '6FD
 
 type OptionsFormProps = {
   options: CardOptions
-  onChange: (options: CardOptions, instant: boolean) => void
+  onChange: (options: CardOptions) => void
 }
 
 function OptionsForm({ options, onChange }: OptionsFormProps) {
-  const update = (changes: Partial<CardOptions>) => onChange({ ...options, ...changes }, false)
-  const updateNow = (changes: Partial<CardOptions>) => onChange({ ...options, ...changes }, true)
+  const update = (changes: Partial<CardOptions>) => onChange({ ...options, ...changes })
 
   return (
     <form onSubmit={(event) => event.preventDefault()}>
@@ -38,15 +38,7 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
             onChange={(event) => update({ name: event.target.value })}
           />
         </label>
-        <label className="field">
-          Role
-          <input
-            value={options.role}
-            maxLength={15}
-            placeholder="Front-end"
-            onChange={(event) => update({ role: event.target.value })}
-          />
-        </label>
+        <RolePicker role={options.role} onChange={(role) => update({ role })} />
       </fieldset>
 
       <fieldset>
@@ -60,7 +52,7 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
               style={{ background: `#${color}` }}
               aria-label={`#${color}`}
               aria-pressed={options.color.toUpperCase() === color}
-              onClick={() => updateNow({ color })}
+              onClick={() => update({ color })}
             />
           ))}
         </div>
@@ -86,7 +78,7 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
         </label>
       </fieldset>
 
-      <SkillPicker selected={options.skills} onChange={(skills) => updateNow({ skills })} />
+      <SkillPicker selected={options.skills} hideBadges={options.hideBadges} onChange={update} />
 
       <fieldset>
         <legend>Effects</legend>
@@ -94,7 +86,7 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
           label="Pixelate"
           hint="Turns the avatar and icons into pixel art"
           checked={options.pixelate}
-          onCheckedChange={(pixelate) => updateNow({ pixelate })}
+          onCheckedChange={(pixelate) => update({ pixelate })}
           range={{
             min: 8,
             max: 128,
@@ -107,13 +99,13 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
           label="Shine"
           hint="Holographic shine sweeping across the card"
           checked={options.shine}
-          onCheckedChange={(shine) => updateNow({ shine })}
+          onCheckedChange={(shine) => update({ shine })}
         />
         <Toggle
           label="Auto-flip"
           hint="Flips to the back of the card on a loop"
           checked={options.autoFlip}
-          onCheckedChange={(autoFlip) => updateNow({ autoFlip })}
+          onCheckedChange={(autoFlip) => update({ autoFlip })}
           range={{
             min: 2,
             max: 60,
@@ -126,7 +118,7 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
           label="Private commits"
           hint="Adds private contributions to COMMITS"
           checked={options.includePrivate}
-          onCheckedChange={(includePrivate) => updateNow({ includePrivate })}
+          onCheckedChange={(includePrivate) => update({ includePrivate })}
         />
       </fieldset>
     </form>

@@ -4,48 +4,51 @@ import { buildCardUrl } from './cardUrl'
 import type { CardOptions } from './cardUrl'
 import { apiUrl } from './config/api'
 import { loadOptions, saveOptions } from './savedOptions'
+import type { CardSide } from './renderPreview'
 import CardPreview from './components/CardPreview'
+import DevTools from './components/DevTools'
+import Logo from './components/Logo'
 import OptionsForm from './components/OptionsForm'
 import ShareActions from './components/ShareActions'
 
-// Typing and dragging fire a change per keystroke or step, so the preview waits for them to settle before requesting a new card
-const previewDelay = 600
+// A new username means fetching GitHub data, so the preview waits for typing to settle; every other option renders locally right away
+const usernameDelay = 600
 
 const urlFor = (options: CardOptions) => options.username.trim() ? buildCardUrl(apiUrl, options) : ''
 
 function App() {
   const [options, setOptions] = useState(loadOptions)
-  const [previewOptions, setPreviewOptions] = useState(options)
-
-  const changeOptions = (next: CardOptions, instant: boolean) => {
-    setOptions(next)
-    if (instant) setPreviewOptions(next)
-  }
+  const [previewUsername, setPreviewUsername] = useState(options.username.trim())
+  const [side, setSide] = useState<CardSide>('auto')
 
   useEffect(() => saveOptions(options), [options])
 
   useEffect(() => {
-    const timeout = setTimeout(() => setPreviewOptions(options), previewDelay)
+    const timeout = setTimeout(() => setPreviewUsername(options.username.trim()), usernameDelay)
     return () => clearTimeout(timeout)
-  }, [options])
+  }, [options.username])
 
   const cardUrl = urlFor(options)
 
   return (
     <div className="page">
       <header className="title">
-        <h1>Developer Trainer Card</h1>
-        <p>Build your card and drop it in your GitHub README</p>
+        <Logo />
+        <div>
+          <h1>Developer Trainer Card</h1>
+          <p>Build your card and drop it in your GitHub README</p>
+        </div>
       </header>
       <main className="layout">
         <section className="panel preview-panel" aria-label="Preview">
-          <CardPreview url={urlFor(previewOptions)} />
+          <CardPreview username={previewUsername} url={urlFor({ ...options, username: previewUsername })} side={side} />
           <ShareActions cardUrl={cardUrl} username={options.username} />
         </section>
         <section className="panel" aria-label="Options">
-          <OptionsForm options={options} onChange={changeOptions} />
+          <OptionsForm options={options} onChange={setOptions} />
         </section>
       </main>
+      {import.meta.env.DEV && <DevTools side={side} onSideChange={setSide} />}
     </div>
   )
 }

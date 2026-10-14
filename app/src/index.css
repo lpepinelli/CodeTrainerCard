@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'PokemonFireRed';
-  src: url('./assets/fonts/pokemonFireRed.ttf') format('truetype');
+  src: url('../../api/src/assets/fonts/pokemonFireRed.ttf') format('truetype');
   font-display: block;
 }
 
@@ -11,6 +11,8 @@
   --purple-soft: #cdb8f7;
   --purple-line: #b994f7;
   --frame: #5f5c6e;
+  --page: #d4c3f7;
+  --title: #5b3a99;
   --panel: #e3eaea;
   --field: #f0f0f0;
   --ink: #4b4b4b;
@@ -33,12 +35,13 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.12) 0 5px, transparent 5px 18px),
-    var(--purple-dark);
+    repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.3) 0 5px, transparent 5px 18px),
+    var(--page);
 }
 
 button,
 input,
+select,
 output,
 code {
   font: inherit;
@@ -48,7 +51,9 @@ code {
 /* Stepped corners: four offset shadows draw the border and leave the corner pixels empty */
 .panel,
 input:not([type]),
-button:not(.text-button):not(.swatch) {
+select,
+button:not(.text-button):not(.swatch),
+.skill-slot:not(.empty) {
   border: none;
   box-shadow:
     0 calc(var(--pixel) * -1) 0 0 var(--frame),
@@ -64,9 +69,19 @@ button:not(.text-button):not(.swatch) {
 }
 
 .title {
-  text-align: center;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  color: var(--title);
   margin-bottom: 32px;
+}
+
+.logo {
+  width: 96px;
+  height: 96px;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 4px 0 var(--frame));
 }
 
 .title h1 {
@@ -74,13 +89,13 @@ button:not(.text-button):not(.swatch) {
   font-size: 56px;
   font-weight: normal;
   text-transform: uppercase;
-  text-shadow: 3px 4px 0 var(--frame);
+  text-shadow: 3px 4px 0 rgb(255 255 255 / 0.6);
 }
 
 .title p {
   margin: 4px 0 0;
   font-size: 28px;
-  text-shadow: 2px 2px 0 var(--frame);
+  color: var(--ink);
 }
 
 .layout {
@@ -104,7 +119,11 @@ button:not(.text-button):not(.swatch) {
   aspect-ratio: 1029 / 686;
   display: grid;
   place-items: center;
-  background: var(--purple-light);
+}
+
+/* Until a card renders, the frame is outlined like an empty skill slot */
+.card-frame:not(:has(.card)) {
+  border: var(--pixel) dashed var(--purple-soft);
 }
 
 .card-frame > * {
@@ -126,6 +145,43 @@ button:not(.text-button):not(.swatch) {
   padding: 24px;
   text-align: center;
   text-transform: uppercase;
+}
+
+.not-found {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.not-found p {
+  margin: 0;
+}
+
+.not-found-detail {
+  font-size: 22px;
+  color: #6e6e6e;
+}
+
+.missingno {
+  width: 84px;
+  height: 156px;
+  margin-bottom: 12px;
+  filter: drop-shadow(4px 4px 0 var(--purple-soft));
+  animation: glitch 2.4s steps(1) infinite;
+}
+
+/* Mostly still, with an occasional jump, like a corrupted sprite */
+@keyframes glitch {
+  0%, 82%, 100% { transform: none; }
+  84% { transform: translateX(-6px) skewX(-8deg); }
+  88% { transform: translateX(4px); }
+  92% { transform: translateX(-2px) scaleY(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .missingno {
+    animation: none;
+  }
 }
 
 .share {
@@ -152,6 +208,7 @@ button:not(.text-button):not(.swatch) {
 }
 
 button {
+  -webkit-tap-highlight-color: transparent;
   cursor: pointer;
   padding: 8px 16px;
   margin: var(--pixel);
@@ -171,7 +228,8 @@ button:disabled {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: var(--pixel) solid var(--purple-dark);
   outline-offset: var(--pixel);
 }
@@ -203,11 +261,22 @@ legend {
   margin-bottom: 16px;
 }
 
-input:not([type]) {
+input:not([type]),
+select {
   width: calc(100% - var(--pixel) * 2);
   margin: 0 var(--pixel);
   padding: 6px 10px;
   background: var(--field);
+}
+
+/* The native control clips the pixel font's line, so the arrow is drawn here instead */
+select {
+  appearance: none;
+  height: auto;
+  padding-right: 40px;
+  line-height: 1.1;
+  cursor: pointer;
+  background: var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' shape-rendering='crispEdges'%3E%3Cpath fill='%235F5C6E' d='M0 0h2v2H0zM8 0h2v2H8zM2 2h2v2H2zM6 2h2v2H6zM4 4h2v2H4z'/%3E%3C/svg%3E") no-repeat right 14px center / 15px 9px;
 }
 
 input::placeholder {
@@ -285,6 +354,79 @@ input[type='color']::-moz-color-swatch {
 .text-button:hover:not(:disabled) {
   background: none;
   color: var(--frame);
+}
+
+.skill-slots {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 var(--pixel) 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.skill-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  aspect-ratio: 1;
+  max-height: 120px;
+  background: var(--field);
+  font-size: 22px;
+  text-transform: uppercase;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.skill-slot img {
+  width: 44%;
+  pointer-events: none;
+}
+
+.skill-slot .chip-position {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: var(--purple-dark);
+  color: #fff;
+}
+
+.skill-slot.dragging {
+  cursor: grabbing;
+  background: var(--purple-light);
+  z-index: 1;
+  filter: drop-shadow(4px 6px 0 rgb(95 92 110 / 0.35));
+}
+
+.skill-slot:focus-visible {
+  outline: var(--pixel) solid var(--purple-dark);
+  outline-offset: var(--pixel);
+}
+
+.skill-slot.empty {
+  border: var(--pixel) dashed var(--purple-soft);
+  background: none;
+  cursor: default;
+}
+
+/* Sits on the corner, away from the tile's centre, so touch adjustment doesn't snap drags onto it */
+.skill-slot button.skill-slot-remove {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+  text-shadow: none;
 }
 
 .chips {
@@ -376,6 +518,32 @@ input[type='checkbox']:checked {
   font-size: 24px;
 }
 
+.dev-tools {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #222;
+  color: #fff;
+  font-size: 20px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.dev-tools button {
+  padding: 2px 10px;
+  font-size: 20px;
+}
+
+.dev-tools button[aria-pressed='true'] {
+  background: #fff;
+  color: #222;
+  text-shadow: none;
+}
+
 @media (max-width: 860px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
@@ -391,5 +559,27 @@ input[type='checkbox']:checked {
 
   .title h1 {
     font-size: 40px;
+  }
+}
+
+@media (max-width: 520px) {
+  .skill-slots {
+    gap: 12px;
+  }
+
+  .title {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  /* Tiles are too small for the number to clear the icon; the order still reads left to right */
+  .skill-slot .chip-position {
+    display: none;
   }
 }

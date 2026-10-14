@@ -22,11 +22,12 @@ test('every option is passed in the format the API reads', () => {
     shine: true,
     autoFlip: true,
     flipSeconds: 5,
-    includePrivate: true
+    includePrivate: true,
+    hideBadges: true
   })
   assert.equal(
     url,
-    'https://api.test/api/card/octocat?name=Mona%20Lisa&role=Front%20%26%20Back&color=FF8A8A&skills=ts,react,go&pixelate=32&shine&auto-flip=5&private'
+    'https://api.test/api/card/octocat?name=Mona%20Lisa&role=Front%20%26%20Back&color=FF8A8A&skills=ts,react,go&pixelate=32&shine&auto-flip=5&private&hide-badges'
   )
 })
 

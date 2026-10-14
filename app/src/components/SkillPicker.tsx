@@ -1,23 +1,39 @@
-import { maxSkills, skills } from '../config/skills'
+import { skills } from '../../../api/src/config/skills'
+import { maxSkills } from '../../../api/src/templates/card'
+import SkillSlots from './SkillSlots'
+import Toggle from './Toggle'
 
 type SkillPickerProps = {
   selected: string[]
-  onChange: (skills: string[]) => void
+  hideBadges: boolean
+  onChange: (changes: { skills: string[]; hideBadges?: boolean }) => void
 }
 
-function SkillPicker({ selected, onChange }: SkillPickerProps) {
+function SkillPicker({ selected, hideBadges, onChange }: SkillPickerProps) {
+  const limit = maxSkills(hideBadges)
+
   const toggle = (skill: string) =>
-    onChange(selected.includes(skill) ? selected.filter((item) => item !== skill) : [...selected, skill])
+    onChange({ skills: selected.includes(skill) ? selected.filter((item) => item !== skill) : [...selected, skill] })
+
+  // Showing badges again leaves fewer slots, so extra picks are dropped rather than silently cut from the card
+  const toggleBadges = (hide: boolean) => onChange({ hideBadges: hide, skills: selected.slice(0, maxSkills(hide)) })
 
   return (
     <fieldset>
-      <legend>Skills {selected.length}/{maxSkills}</legend>
+      <legend>Skills {selected.length}/{limit}</legend>
       <p className="hint">
-        {selected.length ? 'Shown in the order you pick them. ' : 'None picked: uses your top GitHub languages. '}
-        {selected.length > 0 && <button type="button" className="text-button" onClick={() => onChange([])}>Clear</button>}
+        {selected.length ? 'Drag to change the order on the card. ' : 'None picked: uses your top GitHub languages. '}
+        {selected.length > 0 && <button type="button" className="text-button" onClick={() => onChange({ skills: [] })}>Clear</button>}
       </p>
+      <Toggle
+        label="Hide badges"
+        hint={`Gives the badge row to skills, for up to ${maxSkills(true)}`}
+        checked={hideBadges}
+        onCheckedChange={toggleBadges}
+      />
+      <SkillSlots selected={selected} limit={limit} onChange={(skills) => onChange({ skills })} />
       <div className="chips">
-        {skills.map((skill) => {
+        {Object.keys(skills).map((skill) => {
           const position = selected.indexOf(skill)
           return (
             <button
@@ -25,7 +41,7 @@ function SkillPicker({ selected, onChange }: SkillPickerProps) {
               type="button"
               className="chip"
               aria-pressed={position >= 0}
-              disabled={position < 0 && selected.length >= maxSkills}
+              disabled={position < 0 && selected.length >= limit}
               onClick={() => toggle(skill)}
             >
               {position >= 0 && <span className="chip-position">{position + 1}</span>}
