@@ -18,10 +18,10 @@ jobs:
         working-directory: api
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -34,11 +34,15 @@ jobs:
       - name: Remove dev dependencies
         run: npm prune --omit=dev
 
+      # npm installs every sharp build for the runner's OS; Lambda only loads the glibc one
+      - name: Remove unused sharp builds
+        run: rm -rf node_modules/@img/*musl* node_modules/@img/sharp-wasm32
+
       - name: Zip Lambda code
         run: zip -r lambda.zip node_modules dist
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: us-east-1
