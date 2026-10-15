@@ -1,13 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 
+import { assetsDir } from '../assetsDir';
 import { achievements, tiers } from '../config/achievements';
 
 type Achievement = { slug: string; tier: string };
 
 const maxBadges = 3;
 
-const iconsDir = path.join(__dirname, '..', 'assets', 'achievements');
+const iconsDir = path.join(assetsDir, 'achievements');
 
 const icons = new Map(fs.readdirSync(iconsDir).filter((file) => file.endsWith('.png')).map((file) => {
     const image = fs.readFileSync(path.join(iconsDir, file));
