@@ -6,3 +6,5 @@
 <img src="http://localhost:3333/api/card/lpepinelli?role=Software%20Eng.&skills=ts,react,tailwind,node&pixelate&shine&auto-flip=4" width="500px">
 
 Font: [Pokemon Fire Red](http://fontstruct.com/fontstructions/show/703881) by KaelinT, licensed under [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/). Modified to fix an invalid cmap entry.
+
+<a href="https://github.com/lpepinelli"><img src="https://codetrainer.pepinelli.dev/api/card/lpepinelli?role=Software%20Eng.&skills=aws,terraform,ts,csharp&shine&auto-flip=15&private" alt="lpepinelli's Code Trainer Card" width="500"></a>
