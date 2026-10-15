@@ -15,7 +15,7 @@ Infrastructure is managed with Terraform (`infra/`), applied manually. CI/CD dep
 
 There is **no root-level package.json**. All commands must be run from within the respective sub-project directory.
 
-The root `justfile` has one shortcut: `just dev` runs both dev servers in watch mode in parallel (`just dev-api` / `just dev-app` run one).
+The root `justfile` has two shortcuts: `just install` installs both sub-projects, and `just dev` runs both dev servers in watch mode in parallel (`just dev-api` / `just dev-app` run one).
 
 ### API (`api/`)
 

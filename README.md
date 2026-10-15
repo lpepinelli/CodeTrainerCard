@@ -79,7 +79,7 @@ codetrainer.pepinelli.dev ── CloudFront ─┬─ /*      → S3: the card b
 Requires Node 22.18+, [just](https://github.com/casey/just) and the [GitHub CLI](https://cli.github.com) logged in (`gh auth login`); the API uses its token to call GitHub.
 
 ```sh
-cd api && npm install && cd ../app && npm install && cd ..
+just install
 just dev
 ```
 

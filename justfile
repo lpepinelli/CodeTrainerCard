@@ -1,3 +1,7 @@
+install:
+    cd api && npm install
+    cd app && npm install
+
 # Run the API and the app in watch mode, with the app calling the local API
 [parallel]
 dev: dev-api dev-app
