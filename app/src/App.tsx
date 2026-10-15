@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react'
+import type { ComponentType } from 'react'
 
 import Builder from './components/Builder'
+import Guide from './components/Guide'
 import TitleScreen from './components/TitleScreen'
 
 const subscribe = (onChange: () => void) => {
@@ -8,10 +10,16 @@ const subscribe = (onChange: () => void) => {
   return () => window.removeEventListener('hashchange', onChange)
 }
 
-const isBuilder = () => window.location.hash === '#builder'
+const getHash = () => window.location.hash
+
+const screens: Record<string, ComponentType> = {
+  '#builder': Builder,
+  '#guide': Guide
+}
 
 function App() {
-  return useSyncExternalStore(subscribe, isBuilder) ? <Builder /> : <TitleScreen />
+  const Screen = screens[useSyncExternalStore(subscribe, getHash)] ?? TitleScreen
+  return <Screen />
 }
 
 export default App

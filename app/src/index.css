@@ -430,6 +430,90 @@ button.example:hover:not(:disabled) {
   flex: 1;
 }
 
+.share-help {
+  margin: 12px 0 0;
+  font-size: 24px;
+  text-align: center;
+}
+
+.share-help a,
+.guide a:not(.start) {
+  color: var(--purple-dark);
+}
+
+.share-help a:hover,
+.guide a:not(.start):hover {
+  color: var(--frame);
+}
+
+.guide {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+.guide h2 {
+  margin: 0 0 4px;
+  font-size: 32px;
+  font-weight: normal;
+  color: var(--title);
+  text-transform: uppercase;
+}
+
+.guide p,
+.guide-tips {
+  margin: 0;
+  font-size: 26px;
+}
+
+.guide b {
+  font-weight: normal;
+  color: var(--title);
+}
+
+.guide code {
+  padding: 0 6px;
+  background: var(--field);
+}
+
+.guide-steps {
+  display: grid;
+  gap: 24px;
+  margin: 0 0 32px;
+  padding-left: 40px;
+}
+
+.guide-shot {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 12px;
+  border: var(--pixel) solid var(--frame);
+}
+
+.guide-shot img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.guide-steps li::marker {
+  font-size: 32px;
+  color: var(--title);
+}
+
+.guide-tips {
+  display: grid;
+  gap: 12px;
+  padding-left: 32px;
+}
+
+.guide .start {
+  width: fit-content;
+  margin: 32px auto var(--pixel);
+  font-size: 32px;
+}
+
 button {
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
@@ -802,6 +886,10 @@ input[type='checkbox']:checked {
 
   .panel {
     padding: 16px;
+  }
+
+  .guide-steps {
+    padding-left: 32px;
   }
 
   .title h1 {
