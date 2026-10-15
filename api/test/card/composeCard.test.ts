@@ -42,6 +42,11 @@ test('skills default to the top GitHub languages that have an icon', async () =>
     assert.deepEqual(icons, ['icon-go', 'icon-ts', 'icon-rust']);
 });
 
+test('SQL dialects share one skill, and PL/pgSQL picks postgres', async () => {
+    const card = await composeCard({ ...source, languages: ['TSQL', 'PLSQL', 'PLpgSQL', 'Objective-C'] }, {}, runtime);
+    assert.deepEqual(card.match(/icon-[a-z]+/g), ['icon-sql', 'icon-postgres', 'icon-objectivec']);
+});
+
 test('requested skills replace languages, skipping unknown keys and capping at four', async () => {
     const card = await composeCard(source, { skills: 'react,nope,react,vue,go,ts,rust' }, runtime);
     assert.deepEqual(card.match(/icon-[a-z]+/g), ['icon-react', 'icon-vue', 'icon-go', 'icon-ts']);
