@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Code Trainer Card</title>
-    <meta name="description" content="The trainer card for devs. Build yours and drop it in your GitHub README" />
+    <title>Code Trainer Card · Pokémon-style GitHub profile card</title>
+    <meta name="description" content="Turn your GitHub profile into a pixel-art trainer card inspired by Pokémon FireRed. Build yours and drop it in your README." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://codetrainer.pepinelli.dev/" />
     <meta property="og:title" content="Code Trainer Card" />
-    <meta property="og:description" content="The trainer card for devs. Build yours and drop it in your GitHub README" />
+    <meta property="og:description" content="Turn your GitHub profile into a pixel-art trainer card inspired by Pokémon FireRed. Build yours and drop it in your README." />
     <meta property="og:image" content="https://codetrainer.pepinelli.dev/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -17,7 +17,11 @@
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Replaced by the app on load; it is what crawlers that do not run JavaScript read -->
+    <div id="root">
+      <h1>Code Trainer Card</h1>
+      <p>Turn your GitHub profile into a pixel-art trainer card inspired by Pokémon FireRed. Build yours and drop it in your README. Open the <a href="/builder">card builder</a>, or follow the <a href="/guide">setup guide</a> to add the card to your GitHub profile.</p>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

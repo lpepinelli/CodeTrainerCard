@@ -26,7 +26,7 @@ function ShareActions({ cardUrl, username }: ShareActionsProps) {
           {copied ? 'Copied!' : 'Copy Markdown'}
         </button>
       </div>
-      <p className="share-help">New to GitHub? <a href="#guide">Where do I paste this?</a></p>
+      <p className="share-help">New to GitHub? <a href="/guide">Where do I paste this?</a></p>
     </div>
   )
 }

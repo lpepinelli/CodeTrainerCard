@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-
+import { usePageMeta } from '../pageMeta'
 import { loadOptions } from '../savedOptions'
 import Logo from './Logo'
 import StarLink from './StarLink'
@@ -21,10 +20,11 @@ function Screenshot({ src, alt, width, height }: ScreenshotProps) {
 }
 
 function Guide() {
-  // Coming from the builder keeps its scroll position, which would open the guide halfway down
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+  usePageMeta({
+    path: '/guide',
+    title: 'Add a card to your GitHub profile README · Code Trainer Card',
+    description: 'Five steps to put a Code Trainer Card on your GitHub profile: create your profile repository, build the card and paste it into your README.'
+  })
 
   const username = loadOptions().username.trim()
   const profileUrl = `https://github.com/${username ? encodeURIComponent(username) : ''}`
@@ -68,7 +68,7 @@ function Guide() {
           <li>
             <h2>Build your card</h2>
             <p>
-              In the <a href="#builder">card builder</a>, type your username, pick a color, role and skills, then
+              In the <a href="/builder">card builder</a>, type your username, pick a color, role and skills, then
               press <b>Copy Markdown</b>.
             </p>
           </li>
@@ -102,7 +102,7 @@ function Guide() {
           </li>
           <li>Changed your card? Copy the Markdown again and replace the old one in your README.</li>
         </ul>
-        <a className="start" href="#builder">Build your card</a>
+        <a className="start" href="/builder">Build your card</a>
       </main>
     </div>
   )

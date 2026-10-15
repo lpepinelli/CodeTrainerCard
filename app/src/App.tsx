@@ -1,24 +1,30 @@
-import { useSyncExternalStore } from 'react'
+import { useEffect } from 'react'
 import type { ComponentType } from 'react'
 
 import Builder from './components/Builder'
 import Guide from './components/Guide'
 import TitleScreen from './components/TitleScreen'
 
-const subscribe = (onChange: () => void) => {
-  window.addEventListener('hashchange', onChange)
-  return () => window.removeEventListener('hashchange', onChange)
+const screens: Record<string, ComponentType> = {
+  '/builder': Builder,
+  '/guide': Guide
 }
 
-const getHash = () => window.location.hash
-
-const screens: Record<string, ComponentType> = {
-  '#builder': Builder,
-  '#guide': Guide
+// Earlier versions linked to #builder and #guide, and those links live on in READMEs and shared messages
+const legacyPaths: Record<string, string> = {
+  '#builder': '/builder',
+  '#guide': '/guide'
 }
 
 function App() {
-  const Screen = screens[useSyncExternalStore(subscribe, getHash)] ?? TitleScreen
+  const legacyPath = legacyPaths[window.location.hash]
+  const path = legacyPath ?? (window.location.pathname.replace(/\/+$/, '') || '/')
+
+  useEffect(() => {
+    if (legacyPath) history.replaceState(null, '', legacyPath)
+  }, [legacyPath])
+
+  const Screen = screens[path] ?? TitleScreen
   return <Screen />
 }
 

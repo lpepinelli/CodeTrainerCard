@@ -70,6 +70,11 @@ resource "aws_cloudfront_distribution" "app" {
     cached_methods         = ["GET", "HEAD"]
     compress               = true
     cache_policy_id        = data.aws_cloudfront_cache_policy.caching_optimized.id
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.app_routes.arn
+    }
   }
 
   ordered_cache_behavior {
@@ -94,4 +99,21 @@ resource "aws_cloudfront_distribution" "app" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
+}
+
+# The app's screens are real paths for search engines and analytics, but S3 only has index.html.
+# A distribution-wide custom error response would also turn the API's 404s into the app page.
+resource "aws_cloudfront_function" "app_routes" {
+  name    = "codetrainer-app-routes"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = <<-EOT
+    var appRoutes = ['/builder', '/builder/', '/guide', '/guide/'];
+
+    function handler(event) {
+      var request = event.request;
+      if (appRoutes.indexOf(request.uri) !== -1) request.uri = '/index.html';
+      return request;
+    }
+  EOT
 }

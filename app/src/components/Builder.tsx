@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { buildCardUrl } from '../cardUrl'
 import type { CardOptions } from '../cardUrl'
 import { apiUrl } from '../config/api'
+import { usePageMeta } from '../pageMeta'
 import { loadOptions, saveOptions } from '../savedOptions'
 import type { CardSide } from '../renderPreview'
 import CardPreview from './CardPreview'
@@ -18,6 +19,12 @@ const usernameDelay = 600
 const urlFor = (options: CardOptions) => options.username.trim() ? buildCardUrl(apiUrl, options) : ''
 
 function Builder() {
+  usePageMeta({
+    path: '/builder',
+    title: 'Card builder · Code Trainer Card',
+    description: 'Build your Code Trainer Card: pick a color, role and skills, preview it live and copy the Markdown for your GitHub README.'
+  })
+
   const [options, setOptions] = useState(loadOptions)
   const [previewUsername, setPreviewUsername] = useState(options.username.trim())
   const [side, setSide] = useState<CardSide>('auto')

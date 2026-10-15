@@ -141,7 +141,8 @@ DeveloperTrainerCard-MVP/
 │   └── tsconfig.json
 ├── app/                    # Frontend (React + Vite + TypeScript)
 │   ├── src/
-│   │   ├── App.tsx                 # Picks the screen from the hash: title screen, builder (#builder) or setup guide (#guide)
+│   │   ├── App.tsx                 # Picks the screen from the path: title screen, /builder or /guide (old #builder/#guide links redirect)
+│   │   ├── pageMeta.ts             # Per-screen title, description and canonical URL
 │   │   ├── main.tsx
 │   │   ├── cardUrl.ts              # Builds the card URL and Markdown from the options
 │   │   ├── renderPreview.ts        # Renders the preview in the browser with api/src/card + canvas pixelation
@@ -180,6 +181,7 @@ DeveloperTrainerCard-MVP/
   - Trigger: push to `main` touching `app/**` or `api/src/**` (the app bundles the shared card code).
   - Hashed `assets/` cache for a year; everything else is `no-cache`, so no invalidation is needed.
   - CloudFront routes `/api/*` to the Lambda URL, so card URLs use the custom domain.
+  - A CloudFront Function serves `index.html` for `/builder` and `/guide`; a new app path must be added there too, or it returns S3's 403.
   - DNS for `pepinelli.dev` is outside AWS: the ACM validation and site CNAMEs (Terraform outputs) are added by hand.
 
 ---
