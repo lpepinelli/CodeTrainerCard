@@ -20,6 +20,11 @@ const loadSource = async (username: string): Promise<CardSource> => {
     return { ...profile, badges };
 }
 
+// CloudFront caches cards for 4 hours, so these show who uses the card, not how often it is viewed
+const logUsage = (usage: 'card' | 'builder', username: string) => {
+    console.log(JSON.stringify({ usage, username: username.toLowerCase() }));
+}
+
 const sendError = (error: unknown, username: string, res: Response, next: NextFunction) => {
     if (error instanceof GithubUserNotFoundError) {
         res.status(404).send({ error: `GitHub user '${username}' not found` });
@@ -38,6 +43,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
         res.setHeader('Cache-Control', 'public, max-age=14400');
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(card);
+        logUsage('card', username);
     } catch (error) {
         sendError(error, username, res, next);
     }
@@ -50,6 +56,7 @@ export const getCardSource = async (req: Request, res: Response, next: NextFunct
     try {
         res.setHeader('Cache-Control', 'public, max-age=600');
         res.send(await loadSource(username));
+        logUsage('builder', username);
     } catch (error) {
         sendError(error, username, res, next);
     }
