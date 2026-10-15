@@ -1,21 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.32"
-    }
-  }
-  backend "s3" {
-    bucket = "tf-state-dev-trainer-card"
-    key    = "network/terraform.tfstate"
-    region = "us-east-1"
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-
 variable "github_token" {
   type      = string
   sensitive = true
@@ -79,4 +61,3 @@ resource "aws_lambda_permission" "url" {
 output "lambda_url" {
   value = aws_lambda_function_url.lambda_url.function_url
 }
-

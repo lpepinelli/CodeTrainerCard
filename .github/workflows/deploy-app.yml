@@ -1,0 +1,46 @@
+name: Deploy App
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      # The app bundles the card code from the API
+      - 'api/src/**'
+      - '.github/workflows/deploy-app.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET: codetrainer-pepinelli-dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Hashed bundles never change, so they cache for a year; everything else revalidates so a deploy shows up right away
+      - name: Upload hashed assets
+        run: aws s3 sync dist/assets "s3://$BUCKET/assets" --delete --cache-control "public, max-age=31536000, immutable"
+
+      - name: Upload pages and public files
+        run: aws s3 sync dist "s3://$BUCKET" --delete --exclude "assets/*" --cache-control "no-cache"

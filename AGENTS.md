@@ -7,7 +7,7 @@ Monorepo with two sub-projects that generates SVG "trainer cards" for GitHub dev
 - **`api/`** — Express.js + TypeScript backend. Generates SVG cards via REST endpoints. Deployed to AWS Lambda using `serverless-http`.
 - **`app/`** — React 19 + Vite 8 + TypeScript frontend. Card builder: fills in the API options, previews the card and copies its URL/Markdown.
 
-Infrastructure is managed with Terraform (`api/infra/terraform/`). CI/CD deploys the API to AWS Lambda via GitHub Actions on pushes to `main` that touch `api/`.
+Infrastructure is managed with Terraform (`infra/`), applied manually. CI/CD deploys the API to AWS Lambda and the app to S3 + CloudFront (`codetrainer.pepinelli.dev`) via GitHub Actions on pushes to `main`.
 
 ---
 
@@ -39,7 +39,7 @@ SVG preview page: `http://localhost:3333/preview`
 | `npm run preview` | Preview production build            |
 | `npm test`        | Run tests (`node --test`, no extra packages) |
 
-The API base URL defaults to the deployed Lambda. In dev mode `app/.env.development` sets `VITE_API_URL=http://localhost:3333`, so `npm run dev` calls the local API; production builds use the Lambda.
+The API base URL defaults to `https://codetrainer.pepinelli.dev`, where CloudFront proxies `/api/*` to the Lambda. In dev mode `app/.env.development` sets `VITE_API_URL=http://localhost:3333`, so `npm run dev` calls the local API.
 
 ### Tests
 
@@ -125,7 +125,8 @@ DeveloperTrainerCard-MVP/
 ├── .devcontainer/          # Dev container config (Neovim, Terraform, AWS CLI)
 ├── .github/
 │   └── workflows/
-│       └── deploy-lambda.yml   # CI/CD: deploy API to AWS Lambda
+│       ├── deploy-lambda.yml   # CI/CD: deploy API to AWS Lambda
+│       └── deploy-app.yml      # CI/CD: build the app and sync it to S3
 ├── api/                    # Backend (Express + TypeScript)
 │   ├── src/
 │   │   ├── card/                   # Shared with the app: query parsing + card composition (no Node APIs)
@@ -139,8 +140,6 @@ DeveloperTrainerCard-MVP/
 │   │   ├── public/
 │   │   │   └── index.html          # Local dev SVG preview page
 │   │   └── index.ts                # Express app entry + serverless export
-│   ├── infra/
-│   │   └── terraform/              # AWS Lambda infrastructure
 │   ├── package.json
 │   └── tsconfig.json
 ├── app/                    # Frontend (React + Vite + TypeScript)
@@ -157,6 +156,7 @@ DeveloperTrainerCard-MVP/
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.ts
+├── infra/                  # Terraform: Lambda (api.tf), S3 + CloudFront + ACM for the app (app.tf)
 ├── AGENTS.md               # This file
 └── README.md
 ```
@@ -182,7 +182,11 @@ DeveloperTrainerCard-MVP/
   - Build: `npm install && npm run build && zip -r lambda.zip node_modules dist src`.
   - Lambda handler: `dist/index.handler` (via `serverless-http`).
   - Public Lambda URL (no auth).
-- **App**: No deployment configured yet.
+- **App**: S3 bucket `codetrainer-pepinelli-dev` behind CloudFront at `codetrainer.pepinelli.dev`, via GitHub Actions.
+  - Trigger: push to `main` touching `app/**` or `api/src/**` (the app bundles the shared card code).
+  - Hashed `assets/` cache for a year; everything else is `no-cache`, so no invalidation is needed.
+  - CloudFront routes `/api/*` to the Lambda URL, so card URLs use the custom domain.
+  - DNS for `pepinelli.dev` is outside AWS: the ACM validation and site CNAMEs (Terraform outputs) are added by hand.
 
 ---
 
