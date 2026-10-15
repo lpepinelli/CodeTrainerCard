@@ -1,8 +1,3 @@
-variable "github_token" {
-  type      = string
-  sensitive = true
-}
-
 # IAM role for Lambda
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_exec_role"
@@ -45,19 +40,25 @@ resource "aws_lambda_function" "card_lambda" {
   }
 }
 
+# CloudFront's origin; IAM auth means only signed requests from the distribution get through
 resource "aws_lambda_function_url" "lambda_url" {
   function_name      = aws_lambda_function.card_lambda.function_name
-  authorization_type = "NONE"
+  authorization_type = "AWS_IAM"
 }
 
-resource "aws_lambda_permission" "url" {
-  statement_id           = "FunctionURLAllowPublicAccess"
-  action                 = "lambda:InvokeFunctionUrl"
-  function_name          = aws_lambda_function.card_lambda.function_name
-  principal              = "*"
-  function_url_auth_type = "NONE"
+# Function URLs need both actions granted to the caller
+resource "aws_lambda_permission" "cloudfront_url" {
+  statement_id  = "AllowCloudFrontInvokeFunctionUrl"
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.card_lambda.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.app.arn
 }
 
-output "lambda_url" {
-  value = aws_lambda_function_url.lambda_url.function_url
+resource "aws_lambda_permission" "cloudfront_invoke" {
+  statement_id  = "AllowCloudFrontInvokeFunction"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.card_lambda.function_name
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = aws_cloudfront_distribution.app.arn
 }

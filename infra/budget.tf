@@ -1,8 +1,3 @@
-# Kept out of the repo: set it in terraform.tfvars
-variable "budget_email" {
-  type = string
-}
-
 # A public repo brings traffic; the account's 10 concurrent Lambdas already cap load, this flags the bill
 resource "aws_budgets_budget" "monthly" {
   name         = "codetrainer-monthly"

@@ -156,7 +156,7 @@ DeveloperTrainerCard-MVP/
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.ts
-├── infra/                  # Terraform: Lambda (api.tf), S3 + CloudFront + ACM for the app (app.tf), cost alert (budget.tf)
+├── infra/                  # Terraform, one file per concern: lambda, s3, cloudfront, acm, budget + variables, locals, data, outputs
 ├── AGENTS.md               # This file
 └── README.md
 ```
@@ -181,7 +181,7 @@ DeveloperTrainerCard-MVP/
   - Trigger: push to `main` touching `api/**`.
   - Build: `npm install && npm run build && zip -r lambda.zip node_modules dist src`.
   - Lambda handler: `dist/index.handler` (via `serverless-http`).
-  - Public Lambda URL (no auth).
+  - Lambda URL with IAM auth: only CloudFront (origin access control) can call it; the public entry point is `codetrainer.pepinelli.dev/api/*`.
 - **App**: S3 bucket `codetrainer-pepinelli-dev` behind CloudFront at `codetrainer.pepinelli.dev`, via GitHub Actions.
   - Trigger: push to `main` touching `app/**` or `api/src/**` (the app bundles the shared card code).
   - Hashed `assets/` cache for a year; everything else is `no-cache`, so no invalidation is needed.
