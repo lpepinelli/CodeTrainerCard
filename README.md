@@ -92,11 +92,11 @@ Run the tests with `npm test` in `api/` or `app/`.
 
 Everything is in `infra/`. You'll need an AWS account, a domain, and a GitHub [fine-grained token](https://github.com/settings/personal-access-tokens) (no permissions needed; it only reads public profiles).
 
-1. Point the names at your own: the state bucket in `infra/main.tf`, the domain in `infra/locals.tf` and `app/src/config/api.ts`, the bucket name in `infra/s3.tf` and the bucket and function names in `.github/workflows/`.
+1. Point the names at your own: the state bucket in `infra/main.tf`, the domain and GitHub repository in `infra/locals.tf`, the domain in `app/src/config/api.ts`, the bucket name in `infra/s3.tf` and the bucket and function names in `.github/workflows/`.
 2. Create `infra/terraform.tfvars` with `github_token` and `budget_email` (for a cost alert).
 3. `terraform apply -target=aws_acm_certificate.app`, add the CNAME from `terraform output cert_validation` at your DNS provider, then run `terraform apply`.
 4. Point your domain at the `terraform output app_cname` value.
-5. Add `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` as repository secrets. Pushes to `main` deploy the API and the builder.
+5. Add a repository variable `AWS_DEPLOY_ROLE_ARN` set to `terraform output deploy_role_arn`. Pushes to `main` deploy the API and the builder: GitHub Actions assumes that role through OIDC, so no AWS keys are stored. The role relies on your account's GitHub OIDC provider; if it doesn't have one yet, [add it](https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) first.
 
 ## Credits
 

@@ -17,3 +17,7 @@ output "app_cname" {
 output "app_bucket" {
   value = aws_s3_bucket.app.bucket
 }
+
+output "deploy_role_arn" {
+  value = aws_iam_role.deploy.arn
+}

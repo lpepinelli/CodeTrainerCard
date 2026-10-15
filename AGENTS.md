@@ -7,7 +7,7 @@ Monorepo with two sub-projects that generates SVG "trainer cards" for GitHub dev
 - **`api/`** — Express.js + TypeScript backend. Generates SVG cards via REST endpoints. Deployed to AWS Lambda using `serverless-http`.
 - **`app/`** — React 19 + Vite 8 + TypeScript frontend. Card builder: fills in the API options, previews the card and copies its URL/Markdown.
 
-Infrastructure is managed with Terraform (`infra/`), applied manually. CI/CD deploys the API to AWS Lambda and the app to S3 + CloudFront (`codetrainer.pepinelli.dev`) via GitHub Actions on pushes to `main`.
+Infrastructure is managed with Terraform (`infra/`), applied manually. CI/CD assumes an IAM role through GitHub OIDC (`infra/deploy.tf`, repo variable `AWS_DEPLOY_ROLE_ARN`; no AWS keys) and deploys the API to AWS Lambda and the app to S3 + CloudFront (`codetrainer.pepinelli.dev`) via GitHub Actions on pushes to `main`.
 
 ---
 
