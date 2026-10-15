@@ -23,7 +23,7 @@ The root `justfile` has two shortcuts: `just install` installs both sub-projects
 | ----------------- | ---------------------------------------------------------------- |
 | `npm install`     | Install dependencies                                             |
 | `npm run dev`     | Start dev server with hot-reload (tsx watch + livereload on 35729) |
-| `npm run build`   | Compile TypeScript (`tsc`) to `dist/`                            |
+| `npm run build`   | Type-check (`tsc --noEmit`), bundle with esbuild to `dist/index.js` and copy `src/assets` |
 | `npm start`       | Run compiled output (`node ./dist/index.js`)                     |
 
 Dev server listens on `http://localhost:3333` (or `PORT` env var).  
@@ -61,7 +61,7 @@ These conventions are inferred from the existing codebase. Follow them for consi
 
 ### TypeScript Configuration
 
-- **API**: `strict: true`, target `es2016`, module `commonjs`, JSX `react-jsx`. Output to `dist/`.
+- **API**: `strict: true`, target `es2016`, module `commonjs`, JSX `react-jsx`. `tsc` only type-checks; esbuild emits the bundle (sharp stays external). In the bundle every module's `__dirname` is `dist/`, so read runtime files through `src/assetsDir.ts`.
 - **App**: `strict: true`, target `ES2022`, `moduleResolution: bundler`, JSX `react-jsx`, `noEmit: true` (Vite handles bundling). Split into `tsconfig.app.json` (src) and `tsconfig.node.json` (vite config).
 - Both projects enable `forceConsistentCasingInFileNames` and `skipLibCheck`.
 
@@ -179,7 +179,7 @@ DeveloperTrainerCard-MVP/
 
 - **API**: Deployed to AWS Lambda (`developer-trainer-card`) via GitHub Actions.
   - Trigger: push to `main` touching `api/**`.
-  - Build: `npm install && npm run build && zip -r lambda.zip node_modules dist src`.
+  - Build: `npm install && npm run build && npm prune --omit=dev`, remove the unused sharp builds (`@img/*musl*`, `@img/sharp-wasm32`), then `zip -r lambda.zip node_modules dist`.
   - Lambda handler: `dist/index.handler` (via `serverless-http`).
   - Lambda URL with IAM auth: only CloudFront (origin access control) can call it; the public entry point is `codetrainer.pepinelli.dev/api/*`.
 - **App**: S3 bucket `codetrainer-pepinelli-dev` behind CloudFront at `codetrainer.pepinelli.dev`, via GitHub Actions.
@@ -198,5 +198,5 @@ DeveloperTrainerCard-MVP/
 - The API uses `cors()` middleware with default (permissive) settings.
 - No database — all card generation is stateless SVG rendering.
 - No authentication on any endpoint.
-- Node.js 18 runtime on Lambda.
+- Node.js 22 runtime on Lambda.
 - Dev container includes Neovim, Terraform CLI, and AWS CLI.
