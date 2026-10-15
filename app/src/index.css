@@ -594,6 +594,26 @@ input.skill-search {
   margin-bottom: 16px;
 }
 
+/* About five rows of chips: each is a line of text plus 8px padding and the 8px margin that holds its pixel border */
+.skill-list {
+  max-height: calc(5 * (1.1em + 16px) + 4 * 12px);
+  overflow-y: auto;
+  scrollbar-color: var(--purple-dark) var(--field);
+}
+
+.skill-group h3 {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 8px 0 4px;
+  background: var(--panel);
+  color: var(--purple-dark);
+  font-size: 26px;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

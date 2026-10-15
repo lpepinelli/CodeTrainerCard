@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { skills } from '../../../api/src/config/skills'
 import { maxSkills } from '../../../api/src/templates/card'
+import { skillCategories } from '../config/skillCategories'
 import SkillSlots from './SkillSlots'
 import Toggle from './Toggle'
 
@@ -19,7 +20,9 @@ function SkillPicker({ selected, hideBadges, onChange }: SkillPickerProps) {
   const [search, setSearch] = useState('')
   const limit = maxSkills(hideBadges)
   const query = search.trim().toLowerCase()
-  const found = Object.keys(skills).filter((skill) => matches(skill, query))
+  const groups = Object.entries(skillCategories)
+    .map(([category, keys]) => ({ category, keys: keys.filter((skill) => matches(skill, query)) }))
+    .filter(({ keys }) => keys.length > 0)
 
   const toggle = (skill: string) =>
     onChange({ skills: selected.includes(skill) ? selected.filter((item) => item !== skill) : [...selected, skill] })
@@ -48,24 +51,31 @@ function SkillPicker({ selected, hideBadges, onChange }: SkillPickerProps) {
         placeholder="Search skills"
         aria-label="Search skills"
       />
-      <div className="chips">
-        {found.length === 0 && <p className="hint">No skill matches '{search.trim()}'</p>}
-        {found.map((skill) => {
-          const position = selected.indexOf(skill)
-          return (
-            <button
-              key={skill}
-              type="button"
-              className="chip"
-              aria-pressed={position >= 0}
-              disabled={position < 0 && selected.length >= limit}
-              onClick={() => toggle(skill)}
-            >
-              {position >= 0 && <span className="chip-position">{position + 1}</span>}
-              {skill}
-            </button>
-          )
-        })}
+      <div className="skill-list">
+        {groups.length === 0 && <p className="hint">No skill matches '{search.trim()}'</p>}
+        {groups.map(({ category, keys }) => (
+          <section key={category} className="skill-group" aria-label={category}>
+            <h3>{category}</h3>
+            <div className="chips">
+              {keys.map((skill) => {
+                const position = selected.indexOf(skill)
+                return (
+                  <button
+                    key={skill}
+                    type="button"
+                    className="chip"
+                    aria-pressed={position >= 0}
+                    disabled={position < 0 && selected.length >= limit}
+                    onClick={() => toggle(skill)}
+                  >
+                    {position >= 0 && <span className="chip-position">{position + 1}</span>}
+                    {skill}
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        ))}
       </div>
     </fieldset>
   )
