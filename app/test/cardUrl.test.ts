@@ -46,9 +46,9 @@ test('disabled effects are left out even when their values changed', () => {
   assert.equal(url, 'https://api.test/api/card/octocat')
 })
 
-test('markdown links a sized card to the GitHub profile', () => {
+test('markdown links a sized card to the builder', () => {
   assert.equal(
-    buildMarkdown('https://api.test/api/card/octocat?skills=ts,go&shine', ' octocat '),
-    `<a href="https://github.com/octocat"><img src="https://api.test/api/card/octocat?skills=ts,go&shine" alt="octocat's Code Trainer Card" width="500"></a>`
+    buildMarkdown('https://site.test', 'https://api.test/api/card/octocat?skills=ts,go&shine', ' octocat '),
+    `<a href="https://site.test"><img src="https://api.test/api/card/octocat?skills=ts,go&shine" alt="octocat's Code Trainer Card" width="500"></a>`
   )
 })

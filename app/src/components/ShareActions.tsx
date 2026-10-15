@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { buildMarkdown } from '../cardUrl'
+import { siteUrl } from '../config/api'
 
 type ShareActionsProps = {
   cardUrl: string
@@ -9,7 +10,7 @@ type ShareActionsProps = {
 
 function ShareActions({ cardUrl, username }: ShareActionsProps) {
   const [copied, setCopied] = useState(false)
-  const markdown = cardUrl && buildMarkdown(cardUrl, username)
+  const markdown = cardUrl && buildMarkdown(siteUrl, cardUrl, username)
 
   const copy = async () => {
     await navigator.clipboard.writeText(markdown)

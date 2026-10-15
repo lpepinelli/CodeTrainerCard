@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 import ExampleCard from './ExampleCard'
 import Logo from './Logo'
+import StarLink from './StarLink'
 
 // Static snapshots, so the landing page never spends API or GitHub rate limit on visitors who aren't building a card
 const examples = [
@@ -31,7 +32,10 @@ function TitleScreen() {
       {examples.map(({ username, side }) => (
         <ExampleCard key={username} username={username} side={side} />
       ))}
-      <a className="start" href="#builder">Press start</a>
+      <div className="title-actions">
+        <a className="start" href="#builder">Press start</a>
+        <StarLink />
+      </div>
     </main>
   )
 }

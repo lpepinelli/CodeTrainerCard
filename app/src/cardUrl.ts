@@ -60,6 +60,7 @@ export const buildCardUrl = (apiUrl: string, options: CardOptions) => {
 
 const cardWidth = 500
 
-// HTML rather than ![](): Markdown images can't be sized, and at its native 1029px the card fills the README
-export const buildMarkdown = (cardUrl: string, username: string) =>
-  `<a href="https://github.com/${username.trim()}"><img src="${cardUrl}" alt="${username.trim()}'s Code Trainer Card" width="${cardWidth}"></a>`
+// HTML rather than ![](): Markdown images can't be sized, and at its native 1029px the card fills the README.
+// The link goes to the builder rather than the profile the reader is already on, so they can make their own
+export const buildMarkdown = (siteUrl: string, cardUrl: string, username: string) =>
+  `<a href="${siteUrl}"><img src="${cardUrl}" alt="${username.trim()}'s Code Trainer Card" width="${cardWidth}"></a>`

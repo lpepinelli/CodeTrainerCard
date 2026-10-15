@@ -10,6 +10,7 @@ import DevTools from './DevTools'
 import Logo from './Logo'
 import OptionsForm from './OptionsForm'
 import ShareActions from './ShareActions'
+import StarLink from './StarLink'
 
 // A new username means fetching GitHub data, so the preview waits for typing to settle; every other option renders locally right away
 const usernameDelay = 600
@@ -32,6 +33,9 @@ function Builder() {
 
   return (
     <div className="page">
+      <div className="page-bar">
+        <StarLink />
+      </div>
       <header className="title">
         <Logo />
         <div>

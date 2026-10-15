@@ -54,6 +54,7 @@ input:not([type]),
 select,
 button:not(.text-button):not(.swatch):not(.example),
 .start,
+.star-link,
 .skill-slot:not(.empty) {
   border: none;
   box-shadow:
@@ -67,6 +68,24 @@ button:not(.text-button):not(.swatch):not(.example),
   max-width: 1280px;
   margin: 0 auto;
   padding: 32px 16px 48px;
+}
+
+.page-bar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+/* Compact so it clears the centered title down to tablet widths */
+.page-bar .star-link {
+  gap: 10px;
+  padding: 6px 14px;
+  font-size: 22px;
+}
+
+.page-bar .star-link::before {
+  width: 22px;
+  height: 22px;
 }
 
 .title {
@@ -199,6 +218,10 @@ button.example:hover:not(:disabled) {
   filter: drop-shadow(8px 10px 0 rgb(95 92 110 / 0.35));
 }
 
+.example.left .example-faces img {
+  filter: drop-shadow(-8px 10px 0 rgb(95 92 110 / 0.35));
+}
+
 .example-faces .example-back {
   position: absolute;
   inset: 0;
@@ -209,8 +232,15 @@ button.example:hover:not(:disabled) {
   50% { transform: translateY(-12px); }
 }
 
-.start {
+.title-actions {
   grid-area: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.start {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -245,6 +275,38 @@ button.example:hover:not(:disabled) {
 
 @keyframes blink {
   50% { visibility: hidden; }
+}
+
+.star-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: var(--pixel);
+  padding: 8px 18px;
+  background: var(--field);
+  color: var(--ink);
+  font-size: 26px;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--ink-shadow);
+  transition: background-color 0.2s;
+}
+
+/* Drawn in pixels: the pixel font has no star glyph */
+.star-link::before {
+  content: '';
+  width: 27px;
+  height: 27px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath fill='%23E8B500' d='M4 0h1v1H4zM3 1h3v1H3zM3 2h3v1H3zM0 3h9v1H0zM1 4h7v1H1zM2 5h5v1H2zM2 6h5v1H2zM1 7h3v1H1zM5 7h3v1H5zM1 8h2v1H1zM6 8h2v1H6z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.star-link:hover {
+  background: #fff;
+}
+
+.star-link:focus-visible {
+  outline: var(--pixel) solid var(--purple-dark);
+  outline-offset: var(--pixel);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -763,7 +825,7 @@ input[type='checkbox']:checked {
     font-size: 28px;
   }
 
-  .start {
+  .title-actions {
     justify-self: center;
   }
 }
@@ -782,6 +844,14 @@ input[type='checkbox']:checked {
   .logo {
     width: 72px;
     height: 72px;
+  }
+
+  /* The stacked header puts the logo top-center, right under the corner */
+  .page-bar {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
   }
 
   /* Tiles are too small for the number to clear the icon; the order still reads left to right */
