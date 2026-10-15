@@ -102,7 +102,7 @@ Está tudo em `infra/`. Você vai precisar de uma conta na AWS, um domínio e um
 
 ## Créditos
 
-- Fonte: [Pokemon Fire Red](http://fontstruct.com/fontstructions/show/703881) de KaelinT, licenciada sob [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/). Modificada para corrigir uma entrada cmap inválida.
+- Fonte: [Pokemon Fire Red](https://fontlibrary.org/en/font/pokemon) de KaelinT, licenciada sob [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Modificada para corrigir uma entrada cmap inválida.
 - Ícones de skills: [devicon](https://devicon.dev) (MIT) e [Simple Icons](https://simpleicons.org) (CC0). Os logos pertencem aos seus donos.
 - As insígnias são as artes de conquistas do próprio GitHub, mostradas conforme as conquistas de cada perfil.
 - Inspirado no trainer card de Pokémon FireRed. Este é um projeto de fã, sem afiliação com a Nintendo, a Game Freak ou a The Pokémon Company.
