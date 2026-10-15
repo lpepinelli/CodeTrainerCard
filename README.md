@@ -48,7 +48,7 @@ Add any of these as query parameters, for example `?role=Back-end&skills=go,post
 | `shine` | `shine` | A light sweeps across the card |
 | `auto-flip` | `auto-flip` or `auto-flip=15` | Flips to the back every few seconds. The number is how long the front shows, 2 to 60, default 10 |
 
-Flags like `shine` need no value. Animations stop for viewers who ask their system to reduce motion.
+Flags like `shine` need no value. A `pixelate` or `auto-flip` number outside its range turns that effect off, and an invalid `color` falls back to the default. Animations stop for viewers who ask their system to reduce motion.
 
 ## Skills
 
@@ -94,7 +94,7 @@ Run the tests with `npm test` in `api/` or `app/`.
 
 Everything is in `infra/`. You'll need an AWS account, a domain, and a GitHub [fine-grained token](https://github.com/settings/personal-access-tokens) (no permissions needed; it only reads public profiles).
 
-1. Point the names at your own: the state bucket in `infra/main.tf`, the domain and GitHub OIDC subject in `infra/locals.tf`, the domain in `app/src/config/api.ts`, the bucket name in `infra/s3.tf` and the bucket and function names in `.github/workflows/`.
+1. Point the names at your own: the state bucket in `infra/main.tf`, the domain and GitHub OIDC subject in `infra/locals.tf`, the domain in `app/src/config/api.ts`, the bucket name in `infra/s3.tf`, the function name in `infra/lambda.tf`, and the bucket and function names in `.github/workflows/` (the function names must match).
 2. Create `infra/terraform.tfvars` with `github_token` and `budget_email` (for a cost alert).
 3. `terraform apply -target=aws_acm_certificate.app`, add the CNAME from `terraform output cert_validation` at your DNS provider, then run `terraform apply`.
 4. Point your domain at the `terraform output app_cname` value.
