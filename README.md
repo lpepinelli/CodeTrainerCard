@@ -92,7 +92,7 @@ Run the tests with `npm test` in `api/` or `app/`.
 
 Everything is in `infra/`. You'll need an AWS account, a domain, and a GitHub [fine-grained token](https://github.com/settings/personal-access-tokens) (no permissions needed; it only reads public profiles).
 
-1. Point the names at your own: the state bucket in `infra/main.tf`, the domain and GitHub repository in `infra/locals.tf`, the domain in `app/src/config/api.ts`, the bucket name in `infra/s3.tf` and the bucket and function names in `.github/workflows/`.
+1. Point the names at your own: the state bucket in `infra/main.tf`, the domain and GitHub OIDC subject in `infra/locals.tf`, the domain in `app/src/config/api.ts`, the bucket name in `infra/s3.tf` and the bucket and function names in `.github/workflows/`.
 2. Create `infra/terraform.tfvars` with `github_token` and `budget_email` (for a cost alert).
 3. `terraform apply -target=aws_acm_certificate.app`, add the CNAME from `terraform output cert_validation` at your DNS provider, then run `terraform apply`.
 4. Point your domain at the `terraform output app_cname` value.

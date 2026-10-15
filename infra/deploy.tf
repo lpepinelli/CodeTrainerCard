@@ -16,7 +16,7 @@ resource "aws_iam_role" "deploy" {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
           # Only pushes to main: workflows from forks and other branches can't assume it
-          "token.actions.githubusercontent.com:sub" = "repo:${local.github_repo}:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "${local.github_oidc_subject}:ref:refs/heads/main"
         }
       }
     }]
