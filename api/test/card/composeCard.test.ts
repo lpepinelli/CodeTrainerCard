@@ -47,6 +47,11 @@ test('SQL dialects share one skill, and PL/pgSQL picks postgres', async () => {
     assert.deepEqual(card.match(/icon-[a-z]+/g), ['icon-sql', 'icon-postgres', 'icon-objectivec']);
 });
 
+test('Visual Basic flavors share one skill, and Pascal and TeX pick delphi and latex', async () => {
+    const card = await composeCard({ ...source, languages: ['VBA', 'Visual Basic .NET', 'Pascal', 'TeX'] }, {}, runtime);
+    assert.deepEqual(card.match(/icon-[a-z]+/g), ['icon-visualbasic', 'icon-delphi', 'icon-latex']);
+});
+
 test('requested skills replace languages, skipping unknown keys and capping at four', async () => {
     const card = await composeCard(source, { skills: 'react,nope,react,vue,go,ts,rust' }, runtime);
     assert.deepEqual(card.match(/icon-[a-z]+/g), ['icon-react', 'icon-vue', 'icon-go', 'icon-ts']);

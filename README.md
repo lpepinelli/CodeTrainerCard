@@ -52,15 +52,16 @@ Flags like `shine` need no value. Animations stop for viewers who ask their syst
 
 | Category | Keys |
 | --- | --- |
-| Languages | `ts` `js` `python` `java` `go` `rust` `c` `cpp` `csharp` `php` `ruby` `kotlin` `swift` `dart` `bash` `lua` `elixir` `scala` `haskell` `r` `julia` `zig` `ocaml` `clojure` `erlang` `fsharp` `perl` `objectivec` `powershell` `solidity` `gleam` |
-| Frontend | `html` `css` `react` `angular` `vue` `svelte` `nextjs` `tailwind` `flutter` |
+| Languages | `ts` `js` `python` `java` `go` `rust` `c` `cpp` `csharp` `php` `ruby` `kotlin` `swift` `dart` `bash` `lua` `elixir` `scala` `haskell` `r` `julia` `zig` `ocaml` `clojure` `erlang` `fsharp` `perl` `objectivec` `powershell` `solidity` `gleam` `groovy` `elm` `nim` `crystal` `nix` `matlab` `fortran` `cobol` `coffeescript` `prolog` `racket` `purescript` `haxe` `visualbasic` `delphi` `apex` `vyper` `latex` `vala` `ballerina` `apl` `wolfram` `processing` `wasm` |
+| Frontend | `html` `css` `react` `angular` `vue` `svelte` `nextjs` `astro` `tailwind` `flutter` |
 | Backend | `node` `express` `nestjs` `django` `fastapi` `spring` `laravel` `rails` `dotnet` `graphql` |
 | Databases | `sql` `postgres` `mysql` `sqlite` `mongodb` `redis` `firebase` `supabase` `prisma` |
 | DevOps & Cloud | `docker` `kubernetes` `terraform` `aws` `gcp` `azure` `githubactions` `nginx` `linux` |
-| Data & ML | `jupyter` `pandas` `pytorch` `tensorflow` |
+| Data & ML | `jupyter` `pandas` `numpy` `matplotlib` `pytorch` `tensorflow` `spark` `airflow` |
+| AI | `claude` `claudecode` `codex` `copilot` `cursor` `opencode` `windsurf` `gemini` `mistral` `deepseek` `perplexity` `huggingface` `langchain` `ollama` `lmstudio` `mcp` `openrouter` |
 | Tools | `git` `vim` `neovim` `figma` |
 
-Missing one? Skills come from [devicon](https://devicon.dev), so adding one is a small PR: drop the icon in `api/src/assets/skills/<key>.svg`, register the key in `api/src/config/skills.ts` (with its GitHub language names, if any) and give it a category in `app/src/config/skillCategories.ts`. The tests check that every skill has an icon and a category.
+Missing one? Skills come from [devicon](https://devicon.dev), or [Simple Icons](https://simpleicons.org) for brands devicon lacks, so adding one is a small PR: drop the icon in `api/src/assets/skills/<key>.svg`, register the key in `api/src/config/skills.ts` (with its GitHub language names, if any) and give it a category in `app/src/config/skillCategories.ts`. The tests check that every skill has an icon and a category.
 
 ## How it works
 
@@ -100,7 +101,7 @@ Everything is in `infra/`. You'll need an AWS account, a domain, and a GitHub [f
 ## Credits
 
 - Font: [Pokemon Fire Red](http://fontstruct.com/fontstructions/show/703881) by KaelinT, licensed under [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/). Modified to fix an invalid cmap entry.
-- Skill icons: [devicon](https://devicon.dev) (MIT).
+- Skill icons: [devicon](https://devicon.dev) (MIT) and [Simple Icons](https://simpleicons.org) (CC0). Logos belong to their owners.
 - Badges are GitHub's achievement artwork, shown for the achievements on each profile.
 - Inspired by the trainer card from Pokémon FireRed. This is a fan project, not affiliated with Nintendo, Game Freak or The Pokémon Company.
 
