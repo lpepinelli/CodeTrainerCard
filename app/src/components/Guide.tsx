@@ -59,10 +59,10 @@ function Guide() {
               README</b> and press <b>Create repository</b>.
             </p>
             <Screenshot
-              src="/guide/new-repository.png"
+              src="/guide/new-repository.webp"
               alt="GitHub's new repository form, with the repository named after the username and marked as special"
-              width={790}
-              height={850}
+              width={1209}
+              height={1301}
             />
           </li>
           <li>
