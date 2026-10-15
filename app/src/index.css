@@ -823,12 +823,12 @@ input[type='checkbox'] {
   margin: 0;
   background: var(--purple-light);
   border: var(--pixel) solid var(--purple-line);
-  border-radius: 50%;
   cursor: pointer;
 }
 
+/* A 7x6 pixel checkmark at 2px per pixel; the fill is --purple-dark, which a data URI can't reference */
 input[type='checkbox']:checked {
-  background: radial-gradient(circle, var(--purple-dark) 0 5px, var(--purple-light) 6px);
+  background: var(--purple-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 6' shape-rendering='crispEdges'%3E%3Cpath fill='%238b63cc' d='M6 0h1v1h-1zM5 1h2v1h-2zM0 2h1v1h-1zM4 2h2v1h-2zM0 3h2v1h-2zM3 3h2v1h-2zM1 4h3v1h-3zM2 5h1v1h-1z'/%3E%3C/svg%3E") center / 14px 12px no-repeat;
 }
 
 .range {
