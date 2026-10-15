@@ -83,12 +83,10 @@ const slot = (x: number, step?: number) => {
     ${outline(box, 3, 'white', step, 0.8)}`;
 }
 
-// Icons are centred in the 80-unit slots that start at y=536
 const slotIcons = (slots: number[], icons: string[], size: number) => icons.slice(0, slots.length)
     .map((icon, index) => `<image href="${icon}" x="${slots[index] + (80 - size) / 2}" y="${536 + (80 - size) / 2}" width="${size}" height="${size}"/>`)
     .join('\n        ');
 
-// The card is shown through <img> (e.g. GitHub's camo proxy), which blocks external resources, so the font comes in as a data URI
 const renderBadgesAndSkills = (step?: number) => `
     <text class="label" x="51" y="557" fill="white">BADGES</text>
     ${badgeSlots.map((x) => slot(x, step)).join('\n    ')}
@@ -100,6 +98,7 @@ const renderSkillsOnly = (step?: number) => `
     <text class="label" x="51" y="557" fill="white">SKILLS</text>
     ${wideSkillSlots.map((x) => slot(x, step)).join('\n    ')}`;
 
+// The card is shown through <img> (e.g. GitHub's camo proxy), which blocks external resources, so the font comes in as a data URI
 export const renderCard = (data: CardData, font: string) => {
     const step = data.pixelBlocks ? pixelStep : undefined;
     const palette = cardPalette(data.color);

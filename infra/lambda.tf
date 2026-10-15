@@ -1,4 +1,3 @@
-# IAM role for Lambda
 resource "aws_iam_role" "lambda_exec" {
   name = "lambda_exec_role"
   assume_role_policy = jsonencode({
@@ -21,7 +20,7 @@ resource "aws_lambda_function" "card_lambda" {
   role             = aws_iam_role.lambda_exec.arn
   handler          = "dist/index.handler"
   runtime          = "nodejs22.x"
-  filename         = "${path.module}/dummy.zip" # Dummy zip for initial creation
+  filename         = "${path.module}/dummy.zip"
   source_code_hash = filebase64sha256("${path.module}/dummy.zip")
   publish          = true
   timeout          = 10
