@@ -102,7 +102,7 @@ Everything is in `infra/`. You'll need an AWS account, a domain, and a GitHub [f
 
 ## Credits
 
-- Font: [Pokemon Fire Red](https://fontlibrary.org/en/font/pokemon) by KaelinT, licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Modified to fix an invalid cmap entry.
+- Font: [Pokemon Fire Red](https://www.cufonfonts.com/font/pokemon-fire-red) by KaelinT, licensed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Modified to fix an invalid cmap entry.
 - Skill icons: [devicon](https://devicon.dev) (MIT) and [Simple Icons](https://simpleicons.org) (CC0). Logos belong to their owners.
 - Badges are GitHub's achievement artwork, shown for the achievements on each profile.
 - Inspired by the trainer card from Pokémon FireRed. This is a fan project, not affiliated with Nintendo, Game Freak or The Pokémon Company.
