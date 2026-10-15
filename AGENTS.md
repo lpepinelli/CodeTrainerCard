@@ -156,7 +156,7 @@ DeveloperTrainerCard-MVP/
 │   ├── index.html
 │   ├── package.json
 │   └── vite.config.ts
-├── infra/                  # Terraform: Lambda (api.tf), S3 + CloudFront + ACM for the app (app.tf)
+├── infra/                  # Terraform: Lambda (api.tf), S3 + CloudFront + ACM for the app (app.tf), cost alert (budget.tf)
 ├── AGENTS.md               # This file
 └── README.md
 ```
