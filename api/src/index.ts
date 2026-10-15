@@ -1,28 +1,17 @@
 import cors from 'cors'
 import express from 'express'
-import path from 'path'
 import serverless from 'serverless-http'
+
 import routes from './routes'
+import site from './routes/site'
 
 const app = express()
 
-// const corsOptions = {
-//   origin: 'http://localhost:3000',
-//   optionsSuccessStatus: 200
-// }
 app.use(cors())
-
-app.get("/preview", (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.get('/', (req, res, next) => {
-  res.send({ Warning: 'API endpoint is /api' })
-})
-
+app.use('/', site)
 app.use('/api', routes)
 
 if (require.main === module) {
@@ -35,4 +24,3 @@ if (require.main === module) {
 }
 
 module.exports.handler = serverless(app);
-

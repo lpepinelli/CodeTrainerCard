@@ -136,7 +136,8 @@ DeveloperTrainerCard-MVP/
 │   │   ├── controller/
 │   │   │   └── cardController.ts   # Card SVG and card data JSON handlers
 │   │   ├── routes/
-│   │   │   └── index.ts            # API route definitions
+│   │   │   ├── index.ts            # API route definitions (/api)
+│   │   │   └── site.ts             # `/` and the dev-only `/preview` page
 │   │   ├── public/
 │   │   │   └── index.html          # Local dev SVG preview page
 │   │   └── index.ts                # Express app entry + serverless export
