@@ -171,7 +171,6 @@ DeveloperTrainerCard-MVP/
 | GET    | `/preview`           | Serves local HTML preview page                 |
 | GET    | `/api/card/:username`| Returns dynamic SVG card. Query: `?color=HEX` (all themed shades derive from it, see `templates/palette.ts`) |
 | GET    | `/api/card/:username/data` | GitHub data the card needs (profile, avatar and badges as data URIs, languages), used by the app to render previews |
-| GET    | `/api/fixedCard`     | Returns a hardcoded SVG card with embedded images |
 
 ---
 
