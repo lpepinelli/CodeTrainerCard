@@ -22,12 +22,11 @@ The root `justfile` has two shortcuts: `just install` installs both sub-projects
 | Command           | Description                                                      |
 | ----------------- | ---------------------------------------------------------------- |
 | `npm install`     | Install dependencies                                             |
-| `npm run dev`     | Start dev server with hot-reload (tsx watch + livereload on 35729) |
+| `npm run dev`     | Start dev server with hot-reload (tsx watch, also on `src/assets`) |
 | `npm run build`   | Type-check (`tsc --noEmit`), bundle with esbuild to `dist/index.js` and copy `src/assets` |
 | `npm start`       | Run compiled output (`node ./dist/index.js`)                     |
 
-Dev server listens on `http://localhost:3333` (or `PORT` env var).  
-SVG preview page: `http://localhost:3333/preview`
+Dev server listens on `http://localhost:3333` (or `PORT` env var). Preview cards in the builder (`just dev`) or open `http://localhost:3333/api/card/<username>` directly.
 
 ### Frontend (`app/`)
 
@@ -136,10 +135,7 @@ DeveloperTrainerCard-MVP/
 │   │   ├── controller/
 │   │   │   └── cardController.ts   # Card SVG and card data JSON handlers
 │   │   ├── routes/
-│   │   │   ├── index.ts            # API route definitions (/api)
-│   │   │   └── site.ts             # `/` and the dev-only `/preview` page
-│   │   ├── public/
-│   │   │   └── index.html          # Local dev SVG preview page
+│   │   │   └── index.ts            # API route definitions (/api)
 │   │   └── index.ts                # Express app entry + serverless export
 │   ├── package.json
 │   └── tsconfig.json
@@ -168,8 +164,6 @@ DeveloperTrainerCard-MVP/
 
 | Method | Path                 | Description                                    |
 | ------ | -------------------- | ---------------------------------------------- |
-| GET    | `/`                  | Returns `{ Warning: 'API endpoint is /api' }`  |
-| GET    | `/preview`           | Serves local HTML preview page                 |
 | GET    | `/api/card/:username`| Returns dynamic SVG card. Query: `?color=HEX` (all themed shades derive from it, see `templates/palette.ts`) |
 | GET    | `/api/card/:username/data` | GitHub data the card needs (profile, avatar and badges as data URIs, languages), used by the app to render previews |
 
