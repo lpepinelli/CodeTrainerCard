@@ -76,6 +76,26 @@ test('out of range values fall back to the defaults', async () => {
     assert.doesNotMatch(card, /class="back"/);
 });
 
+const height = (svg: string) => Number(svg.match(/<svg width="1029" height="(\d+)"/)?.[1]);
+
+test('float makes room for the card to bob, and shadow adds more below it', async () => {
+    const still = await composeCard(source, {}, runtime);
+    const floating = await composeCard(source, { float: '' }, runtime);
+    const shadowed = await composeCard(source, { float: '', shadow: '' }, runtime);
+    assert.equal(height(still), 686);
+    assert.ok(height(floating) > 686);
+    assert.ok(height(shadowed) > height(floating));
+    assert.doesNotMatch(floating, /class="shadow"/);
+    assert.match(shadowed, /<ellipse class="shadow"/);
+    assert.ok(shadowed.includes(`viewBox="0 0 1029 ${height(shadowed)}"`));
+});
+
+test('shadow does nothing without float', async () => {
+    const card = await composeCard(source, { shadow: '' }, runtime);
+    assert.equal(height(card), 686);
+    assert.doesNotMatch(card, /class="shadow"/);
+});
+
 test('hide-badges drops the badge row and makes room for eight skills', async () => {
     const card = await composeCard(source, { 'hide-badges': '', skills: 'ts,js,go,rust,c,cpp,java,php,ruby' }, runtime);
     assert.doesNotMatch(card, /BADGES/);

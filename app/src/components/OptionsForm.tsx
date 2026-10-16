@@ -102,6 +102,17 @@ function OptionsForm({ options, onChange }: OptionsFormProps) {
           onCheckedChange={(shine) => update({ shine })}
         />
         <Toggle
+          label="Float"
+          hint="Card bobs gently up and down"
+          checked={options.float}
+          onCheckedChange={(float) => update({ float })}
+          extra={{
+            label: 'Shadow',
+            checked: options.floatShadow,
+            onCheckedChange: (floatShadow) => update({ floatShadow })
+          }}
+        />
+        <Toggle
           label="Auto-flip"
           hint="Flips to the back of the card on a loop"
           checked={options.autoFlip}

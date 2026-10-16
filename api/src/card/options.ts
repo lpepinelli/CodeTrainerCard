@@ -5,6 +5,8 @@ export type RenderOptions = {
     skills?: string;
     pixelateBlocks?: number;
     shine: boolean;
+    float: boolean;
+    shadow: boolean;
     flipSeconds?: number;
     includePrivate: boolean;
     hideBadges: boolean;
@@ -35,6 +37,8 @@ export const parseRenderOptions = (query: Record<string, unknown>): RenderOption
     skills: text(query.skills),
     pixelateBlocks: blocksAcrossAvatar(query.pixelate),
     shine: isEnabled(query.shine),
+    float: isEnabled(query.float),
+    shadow: isEnabled(query.shadow),
     flipSeconds: frontSeconds(query['auto-flip']),
     includePrivate: isEnabled(query.private),
     hideBadges: isEnabled(query['hide-badges']),

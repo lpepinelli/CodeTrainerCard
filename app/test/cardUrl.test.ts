@@ -20,6 +20,8 @@ test('every option is passed in the format the API reads', () => {
     pixelate: true,
     pixelateBlocks: 32,
     shine: true,
+    float: true,
+    floatShadow: true,
     autoFlip: true,
     flipSeconds: 5,
     includePrivate: true,
@@ -27,7 +29,7 @@ test('every option is passed in the format the API reads', () => {
   })
   assert.equal(
     url,
-    'https://api.test/api/card/octocat?name=Mona%20Lisa&role=Front%20%26%20Back&color=FF8A8A&skills=ts,react,go&pixelate=32&shine&auto-flip=5&private&hide-badges'
+    'https://api.test/api/card/octocat?name=Mona%20Lisa&role=Front%20%26%20Back&color=FF8A8A&skills=ts,react,go&pixelate=32&shine&float&shadow&auto-flip=5&private&hide-badges'
   )
 })
 

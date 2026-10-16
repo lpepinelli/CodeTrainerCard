@@ -7,6 +7,8 @@ export type CardOptions = {
   pixelate: boolean
   pixelateBlocks: number
   shine: boolean
+  float: boolean
+  floatShadow: boolean
   autoFlip: boolean
   flipSeconds: number
   includePrivate: boolean
@@ -26,6 +28,8 @@ export const defaultOptions: CardOptions = {
   pixelate: false,
   pixelateBlocks: defaultPixelateBlocks,
   shine: false,
+  float: false,
+  floatShadow: false,
   autoFlip: false,
   flipSeconds: defaultFlipSeconds,
   includePrivate: false,
@@ -50,6 +54,8 @@ export const buildCardUrl = (apiUrl: string, options: CardOptions) => {
   if (options.skills.length) flag('skills', options.skills.join(','))
   if (options.pixelate) flag('pixelate', options.pixelateBlocks === defaultPixelateBlocks ? undefined : String(options.pixelateBlocks))
   if (options.shine) flag('shine')
+  if (options.float) flag('float')
+  if (options.float && options.floatShadow) flag('shadow')
   if (options.autoFlip) flag('auto-flip', options.flipSeconds === defaultFlipSeconds ? undefined : String(options.flipSeconds))
   if (options.includePrivate) flag('private')
   if (options.hideBadges) flag('hide-badges')
