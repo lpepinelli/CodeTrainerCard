@@ -20,9 +20,14 @@ const loadSource = async (username: string): Promise<CardSource> => {
     return { ...profile, badges };
 }
 
-// CloudFront caches cards for 4 hours, so these show who uses the card, not how often it is viewed
-const logUsage = (usage: 'card' | 'builder', username: string) => {
-    console.log(JSON.stringify({ usage, username: username.toLowerCase() }));
+const isSourceCached = (username: string) => {
+    const login = username.toLowerCase();
+    return loadProfile.has(login) && loadBadgeIcons.has(login);
+}
+
+// CloudFront caches cards for 4 hours, so these show who uses the card, not how often it is viewed; `cached` only covers the warm Lambda's GitHub data
+const logUsage = (usage: 'card' | 'builder', username: string, cached: boolean) => {
+    console.log(JSON.stringify({ usage, username: username.toLowerCase(), cached }));
 }
 
 const sendError = (error: unknown, username: string, res: Response, next: NextFunction) => {
@@ -35,6 +40,7 @@ const sendError = (error: unknown, username: string, res: Response, next: NextFu
 
 export const getCard = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
+    const cached = isSourceCached(username);
 
     try {
         const card = await composeCard(await loadSource(username), req.query, { font, skillIcon, pixelate });
@@ -43,7 +49,7 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
         res.setHeader('Cache-Control', 'public, max-age=14400');
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(card);
-        logUsage('card', username);
+        logUsage('card', username, cached);
     } catch (error) {
         sendError(error, username, res, next);
     }
@@ -52,11 +58,12 @@ export const getCard = async (req: Request, res: Response, next: NextFunction) =
 // Lets the web app render previews itself, fetching GitHub data once per username instead of once per option change
 export const getCardSource = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
+    const cached = isSourceCached(username);
 
     try {
         res.setHeader('Cache-Control', 'public, max-age=600');
         res.send(await loadSource(username));
-        logUsage('builder', username);
+        logUsage('builder', username, cached);
     } catch (error) {
         sendError(error, username, res, next);
     }
