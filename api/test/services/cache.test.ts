@@ -33,6 +33,17 @@ test('entries reload after the TTL', async (t) => {
     assert.equal(await cached('octocat'), 'octocat-2');
 });
 
+test('has reports whether a key would be served from the cache', async (t) => {
+    t.mock.timers.enable({ apis: ['Date'] });
+    const { load } = counter();
+    const cached = cacheFor(1000, load);
+    assert.equal(cached.has('octocat'), false);
+    await cached('octocat');
+    assert.equal(cached.has('octocat'), true);
+    t.mock.timers.tick(1001);
+    assert.equal(cached.has('octocat'), false);
+});
+
 test('failed loads are not cached', async () => {
     const load = mock.fn(async () => {
         if (load.mock.callCount() === 0) throw new Error('GitHub is down');

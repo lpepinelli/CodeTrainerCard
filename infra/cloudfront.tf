@@ -37,11 +37,20 @@ resource "aws_cloudfront_cache_policy" "api" {
 }
 
 resource "aws_cloudfront_distribution" "app" {
+  depends_on = [aws_s3_bucket_ownership_controls.logs]
+
   enabled             = true
   is_ipv6_enabled     = true
   aliases             = [local.app_domain]
   default_root_object = "index.html"
   price_class         = "PriceClass_100"
+
+  # Usage logs only see requests that reach the Lambda; these also show the ones CloudFront answers from its cache
+  logging_config {
+    bucket          = aws_s3_bucket.logs.bucket_domain_name
+    prefix          = "cloudfront/"
+    include_cookies = false
+  }
 
   origin {
     origin_id                = "app"
