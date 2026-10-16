@@ -6,7 +6,7 @@
 
 **The trainer card for devs.** A pixel-art card, inspired by the Pokémon FireRed trainer card, built from your GitHub profile and ready to drop in your README.
 
-<a href="https://codetrainer.pepinelli.dev"><img src="https://codetrainer.pepinelli.dev/api/card/lpepinelli?role=Software%20Eng.&skills=aws,terraform,ts,csharp&shine&auto-flip=15&private" alt="lpepinelli's Code Trainer Card" width="500"></a>
+<a href="https://codetrainer.pepinelli.dev"><img src="https://codetrainer.pepinelli.dev/api/card/lpepinelli?role=Software%20Eng.&skills=aws,terraform,ts,csharp&shine&auto-flip=15&float&private" alt="lpepinelli's Code Trainer Card" width="500"></a>
 
 **[Build yours at codetrainer.pepinelli.dev](https://codetrainer.pepinelli.dev)**
 
