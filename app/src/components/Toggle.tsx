@@ -1,8 +1,13 @@
-type ToggleProps = {
+type Checkbox = {
   label: string
-  hint: string
   checked: boolean
   onCheckedChange: (checked: boolean) => void
+}
+
+type ToggleProps = Checkbox & {
+  hint: string
+  // A sub-option shown beside the checkbox, only while it is on
+  extra?: Checkbox
   range?: {
     min: number
     max: number
@@ -12,13 +17,20 @@ type ToggleProps = {
   }
 }
 
-function Toggle({ label, hint, checked, onCheckedChange, range }: ToggleProps) {
+const CheckboxLabel = ({ label, checked, onCheckedChange }: Checkbox) => (
+  <label className="checkbox">
+    <input type="checkbox" checked={checked} onChange={(event) => onCheckedChange(event.target.checked)} />
+    {label}
+  </label>
+)
+
+function Toggle({ label, hint, checked, onCheckedChange, extra, range }: ToggleProps) {
   return (
     <div className="toggle">
-      <label className="checkbox">
-        <input type="checkbox" checked={checked} onChange={(event) => onCheckedChange(event.target.checked)} />
-        {label}
-      </label>
+      <div className="toggle-row">
+        <CheckboxLabel label={label} checked={checked} onCheckedChange={onCheckedChange} />
+        {extra && checked && <CheckboxLabel {...extra} />}
+      </div>
       <p className="hint">{hint}</p>
       {range && checked && (
         <label className="range">

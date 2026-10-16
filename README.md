@@ -46,6 +46,8 @@ Add any of these as query parameters, for example `?role=Back-end&skills=go,post
 | `private` | `private` | Adds private contributions to the commit count (they must be visible on your GitHub profile) |
 | `pixelate` | `pixelate` or `pixelate=40` | Pixel-art avatar and icons. The number is blocks across the avatar, 8 to 128, default 80 |
 | `shine` | `shine` | A light sweeps across the card |
+| `float` | `float` | The card bobs up and down. Makes the image a little taller |
+| `shadow` | `shadow` | With `float`, a shadow under the card that shrinks as it rises |
 | `auto-flip` | `auto-flip` or `auto-flip=15` | Flips to the back every few seconds. The number is how long the front shows, 2 to 60, default 10 |
 
 Flags like `shine` need no value. A `pixelate` or `auto-flip` number outside its range turns that effect off, and an invalid `color` falls back to the default. Animations stop for viewers who ask their system to reduce motion.

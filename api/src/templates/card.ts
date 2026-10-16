@@ -1,5 +1,5 @@
 import { renderBack } from './cardBack';
-import { flipStyles, motionStyles, shine, shineDefs, shineStyles } from './effects';
+import { flipStyles, floating, floatingHeight, floatStyles, motionStyles, shine, shineDefs, shineStyles } from './effects';
 import { cardBodyClip, renderChrome } from './frame';
 import { cardPalette } from './palette';
 import type { Palette } from './palette';
@@ -22,6 +22,8 @@ export type CardData = {
     pullRequests: string;
     color: string;
     shine: boolean;
+    float: boolean;
+    floatShadow: boolean;
     hideBadges: boolean;
     flipSeconds?: number;
 }
@@ -102,14 +104,22 @@ const renderSkillsOnly = (step?: number) => `
 export const renderCard = (data: CardData, font: string) => {
     const step = data.pixelBlocks ? pixelStep : undefined;
     const palette = cardPalette(data.color);
-    return `<svg width="1029" height="686" viewBox="0 0 1029 686" fill="none" xmlns="http://www.w3.org/2000/svg">
+    const height = data.float ? floatingHeight(data.floatShadow) : 686;
+    const card = `
+    <g class="flip">
+        ${renderFront(data, palette, step)}${data.flipSeconds ? `
+        <g class="back">${renderBack(data, palette, step)}
+        </g>` : ''}${data.shine ? shine : ''}
+    </g>`;
+
+    return `<svg width="1029" height="${height}" viewBox="0 0 1029 ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <style>
             @font-face { font-family: 'PokemonFireRed'; src: url(${font}) format('truetype'); }
             text { font-family: 'PokemonFireRed', monospace; font-size: 64px; }
             .title { font-size: 55px; }
             .label { font-size: 40px; }
-            .id { font-size: 65px; }${data.flipSeconds ? flipStyles(data.flipSeconds) : ''}${data.shine ? shineStyles : ''}${motionStyles}
+            .id { font-size: 65px; }${data.flipSeconds ? flipStyles(data.flipSeconds) : ''}${data.shine ? shineStyles : ''}${data.float ? floatStyles(data.floatShadow) : ''}${motionStyles}
         </style>
         <pattern id="outerStripes" width="1029" height="18.6" patternUnits="userSpaceOnUse">
             <rect width="1029" height="5" fill="#F8F8F8" fill-opacity="0.4"/>
@@ -122,12 +132,7 @@ export const renderCard = (data: CardData, font: string) => {
             ${avatarFill('', data.pixelBlocks)}
         </clipPath>${data.shine ? shineDefs(step) : ''}
     </defs>
-
-    <g class="flip">
-        ${renderFront(data, palette, step)}${data.flipSeconds ? `
-        <g class="back">${renderBack(data, palette, step)}
-        </g>` : ''}${data.shine ? shine : ''}
-    </g>
+${data.float ? floating(card, data.floatShadow) : card}
 </svg>
 `;
 }

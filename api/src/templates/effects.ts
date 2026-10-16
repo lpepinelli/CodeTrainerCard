@@ -36,9 +36,40 @@ export const shineStyles = `
                 100% { transform: translateX(1900px); }
             }`;
 
+const floatRise = 14;
+const shadowY = cardShape.bounds.h + floatRise + 22;
+const shadowRadius = { x: 440, y: 12 };
+
+// A floating card needs room to bob, and below it for its shadow, so its SVG is taller than the card
+export const floatingHeight = (shadow: boolean) => shadow ? shadowY + shadowRadius.y + 2 : cardShape.bounds.h + floatRise;
+
+// The shadow shrinks and fades as the card rises, which is what makes it read as floating rather than sliding
+const shadowStyles = `
+            .shadow { transform-origin: ${cardShape.bounds.w / 2}px ${shadowY}px; animation: shadow 3s ease-in-out infinite; }
+            @keyframes shadow {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(0.8); opacity: 0.6; }
+            }`;
+
+export const floatStyles = (shadow: boolean) => `
+            .float { animation: float 3s ease-in-out infinite; }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-${floatRise}px); }
+            }${shadow ? shadowStyles : ''}`;
+
+// A flat, hard-edged shadow rather than a blur, to match the pixel style.
+// The card rests at the bottom of its rise, so it still sits on its shadow when animations are disabled
+export const floating = (card: string, shadow: boolean) => `${shadow ? `
+    <ellipse class="shadow" cx="${cardShape.bounds.w / 2}" cy="${shadowY}" rx="${shadowRadius.x}" ry="${shadowRadius.y}" fill="black" fill-opacity="0.2"/>` : ''}
+    <g transform="translate(0 ${floatRise})">
+        <g class="float">${card}
+        </g>
+    </g>`;
+
 export const motionStyles = `
             @media (prefers-reduced-motion: reduce) {
-                .flip, .back, .shine { animation: none; }
+                .flip, .back, .shine, .float, .shadow { animation: none; }
             }`;
 
 // Two hard-edged bands instead of a soft gradient, to match the pixel style

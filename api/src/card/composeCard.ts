@@ -67,6 +67,8 @@ export const composeCard = async (source: CardSource, query: Record<string, unkn
         pullRequests: String(source.pullRequests),
         color: options.color,
         shine: options.shine,
+        float: options.float,
+        floatShadow: options.shadow,
         flipSeconds: options.flipSeconds,
         hideBadges: options.hideBadges,
     }, runtime.font);
