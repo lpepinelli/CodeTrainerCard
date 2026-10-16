@@ -52,7 +52,7 @@ code {
 .panel,
 input:not([type]),
 select,
-button:not(.text-button):not(.swatch):not(.example),
+button:not(.text-button):not(.swatch):not(.example):not(.card-url),
 .start,
 .star-link,
 .skill-slot:not(.empty) {
@@ -412,11 +412,52 @@ button.example:hover:not(:disabled) {
 }
 
 .card-url {
+  position: relative;
   display: block;
+  width: 100%;
+  margin: 0;
   padding: 8px 12px;
+  border: none;
   background: var(--field);
+  color: var(--ink);
   font-size: 22px;
+  text-align: left;
+  text-transform: none;
+  text-shadow: none;
   overflow-wrap: anywhere;
+}
+
+.card-url:hover:not(:disabled) {
+  background: var(--purple-light);
+}
+
+.card-url:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.card-url::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  background: var(--frame);
+  color: #fff;
+  font-size: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+/* Stays up after a click so "Copied!" is seen even when the pointer has moved on, or on touch screens */
+.card-url:hover:not(:disabled)::after,
+.card-url:focus-visible::after,
+.card-url.copied::after {
+  opacity: 1;
 }
 
 .share-buttons {
