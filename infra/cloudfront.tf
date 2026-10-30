@@ -43,7 +43,7 @@ resource "aws_cloudfront_distribution" "app" {
   is_ipv6_enabled     = true
   aliases             = [local.app_domain]
   default_root_object = "index.html"
-  price_class         = "PriceClass_100"
+  price_class         = "PriceClass_All"
 
   # Usage logs only see requests that reach the Lambda; these also show the ones CloudFront answers from its cache
   logging_config {
