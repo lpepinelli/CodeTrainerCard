@@ -61,8 +61,10 @@ export const getCardSource = async (req: Request, res: Response, next: NextFunct
     const cached = isSourceCached(username);
 
     try {
+        const source = await loadSource(username);
+
         res.setHeader('Cache-Control', 'public, max-age=600');
-        res.send(await loadSource(username));
+        res.send(source);
         logUsage('builder', username, cached);
     } catch (error) {
         sendError(error, username, res, next);
